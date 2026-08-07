@@ -1,0 +1,303 @@
+@import "tailwindcss";
+
+@theme {
+  /* ===== raw brand palette — updated from Generic Gradient ===== */
+  --color-teal-deep: #1c2b36;   /* darkest stop */
+  --color-teal-dark: #256572;
+  --color-teal: #23827f;
+  --color-teal-light: #499e7d;
+  --color-green-light: #82b773;
+  --color-gold: #c7cb6a;        /* lightest stop, doubles as gold accent */
+  --color-gold-light: #dde3a8;  /* derived tint, for soft accent bg */
+
+  /* neutrals — unchanged, gradient has none of these */
+  --color-olive: #8f8d81;
+  --color-olive-light: #c7c6c0;
+  --color-white: #ffffff;
+  --color-offwhite: #f7f6f2;
+  --color-charcoal: #17181a;
+
+  --font-display: "Rufina", Georgia, serif;
+  --font-body: "Urbanist", "Segoe UI", sans-serif;
+}
+
+/* ================= LIGHT MODE (default) ================= */
+:root,
+[data-theme="light"] {
+  /* Surfaces */
+  --color-bg: var(--color-white);
+  --color-bg-nav: var(--color-teal-dark);
+  --color-bg-alt: #ffffff;
+  --color-surface: var(--color-teal-deep);
+  --color-surface-raised: #ffffff;
+  --color-border: var(--color-olive-light);
+  --color-border-strong: var(--color-teal-light);
+
+  /* Text */
+  --color-text: var(--color-teal-dark);
+  --color-text-nav: var(--color-white);
+  --color-text-muted: var(--color-olive);
+  --color-text-inverse: var(--color-offwhite);
+  --color-heading: var(--color-teal-dark);
+  --color-heading-main: var(--color-teal-dark);
+
+
+  /* Links */
+  --color-link: var(--color-teal-dark);
+  --color-link-hover: var(--color-teal-deep);
+
+  /* Primary button */
+  --color-primary: var(--color-teal);
+  --color-primary-hover: var(--color-teal-dark);
+  --color-primary-active: var(--color-teal-deep);
+  --color-primary-text: #ffffff;
+  --color-primary-disabled: var(--color-olive-light);
+
+  /* Secondary / outline button */
+  --color-secondary-bg: transparent;
+  --color-secondary-border: var(--color-teal);
+  --color-secondary-text: var(--color-teal-dark);
+  --color-secondary-hover-bg: var(--color-teal);
+  --color-secondary-hover-text: #ffffff;
+
+  /* Accent (gold) */
+  --color-accent: var(--color-teal-dark);
+  --color-accent-hover: var(--color-gold);
+  --color-accent-text: var(--color-charcoal);
+  --color-accent-soft: var(--color-gold-light);
+
+  /* Focus / states */
+  --color-focus-ring: var(--color-teal-light);
+  --color-success: var(--color-green-light);
+  --color-shadow: rgba(43, 94, 102, 0.12);
+}
+
+/* ================= DARK MODE ================= */
+[data-theme="dark"] {
+  /* Surfaces */
+  --color-bg: var(--color-teal-deep);
+  --color-bg-nav: var(--color-teal-deep);
+  --color-bg-alt: var(--color-charcoal);
+  --color-surface: var(--color-white);      /* between teal-deep & teal-dark, for cards */
+  --color-surface-raised: #2b4b56;
+  --color-border: var(--color-teal-dark);
+  --color-border-strong: var(--color-teal-light);
+
+  /* Text */
+  --color-text: var(--color-offwhite);
+  --color-text-nav: var(--color-teal-deep);
+  --color-text-muted: var(--color-olive-light);
+  --color-text-inverse: var(--color-charcoal);
+  --color-heading: var(--color-gold);
+  --color-heading-main: var(--color-gold);
+
+
+  /* Links */
+  --color-link: var(--color-offwhite);
+  --color-link-hover: var(--color-gold);
+
+  /* Primary button */
+  --color-primary: var(--color-teal-light);
+  --color-primary-hover: var(--color-green-light);
+  --color-primary-active: var(--color-gold);
+  --color-primary-text: var(--color-charcoal);
+  --color-primary-disabled: var(--color-teal-dark);
+
+  /* Secondary / outline button */
+  --color-secondary-bg: transparent;
+  --color-secondary-border: var(--color-teal-light);
+  --color-secondary-text: var(--color-teal-light);
+  --color-secondary-hover-bg: var(--color-teal-light);
+  --color-secondary-hover-text: var(--color-charcoal);
+
+  /* Accent (gold) */
+  --color-accent: var(--color-gold);
+  --color-accent-hover: var(--color-teal-dark);
+  --color-accent-text: var(--color-charcoal);
+  --color-accent-soft: rgba(199, 203, 106, 0.15);
+
+  /* Focus / states */
+  --color-focus-ring: var(--color-gold);
+  --color-success: var(--color-green-light);
+  --color-shadow: rgba(0, 0, 0, 0.35);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background: var(--color-bg);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  -webkit-font-smoothing: antialiased;
+}
+
+/*h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  color: var(--color-heading);
+  margin: 0;
+}*/
+
+.main-heading {
+  color: var(--color-heading-main);
+}
+
+a {
+  color: var(--color-link);
+  transition: color 0.2s ease;
+}
+a:hover {
+  color: var(--color-link-hover);
+}
+
+/* ---- Buttons ---- */
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--color-primary-text);
+  border: none;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+.btn-primary:hover {
+  background: var(--color-primary-hover);
+}
+.btn-primary:active {
+  background: var(--color-primary-active);
+  transform: translateY(1px);
+}
+.btn-primary:disabled {
+  background: var(--color-primary-disabled);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: var(--color-secondary-bg);
+  color: var(--color-secondary-text);
+  border: 1.5px solid var(--color-secondary-border);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.btn-secondary:hover {
+  background: var(--color-secondary-hover-bg);
+  color: var(--color-secondary-hover-text);
+}
+
+/* ---- Accent buttons (Contact Us / Request a Free Quote) ---- */
+.btn-accent {
+  background: var(--color-accent);
+  color: var(--color-text-nav);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.btn-accent:hover {
+  background: var(--color-accent-hover);
+  color: var(--color-text);
+}
+/* ---- Cards / surfaces ---- */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 4px 16px var(--color-shadow);
+}
+
+/* ---- Focus visibility ---- */
+:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Signature interaction: viewfinder corner brackets on hover */
+.viewfinder {
+  position: relative;
+  overflow: hidden;
+}
+.viewfinder::before,
+.viewfinder::after,
+.viewfinder .vf-tr,
+.viewfinder .vf-br {
+  content: "";
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 20;
+  pointer-events: none;
+}
+.viewfinder::before {
+  top: 12px; left: 12px;
+  border-top: 2px solid var(--color-accent);
+  border-left: 2px solid var(--color-accent);
+  transform: translate(-6px, -6px);
+}
+.viewfinder::after {
+  bottom: 12px; left: 12px;
+  border-bottom: 2px solid var(--color-accent);
+  border-left: 2px solid var(--color-accent);
+  transform: translate(-6px, 6px);
+}
+.viewfinder .vf-tr {
+  top: 12px; right: 12px;
+  border-top: 2px solid var(--color-accent);
+  border-right: 2px solid var(--color-accent);
+  transform: translate(6px, -6px);
+}
+.viewfinder .vf-br {
+  bottom: 12px; right: 12px;
+  border-bottom: 2px solid var(--color-accent);
+  border-right: 2px solid var(--color-accent);
+  transform: translate(6px, 6px);
+}
+.viewfinder:hover::before,
+.viewfinder:hover::after,
+.viewfinder:hover .vf-tr,
+.viewfinder:hover .vf-br {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .viewfinder::before, .viewfinder::after, .viewfinder .vf-tr, .viewfinder .vf-br { transition: none; }
+  html { scroll-behavior: auto; }
+}
+
+.logo-slider {
+    display: flex;
+    width: max-content;
+    animation: scrollLogos 70s linear infinite;
+    gap: 30px;
+}
+
+.logo-card {
+    width: 180px;
+    height: 90px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 12px;
+
+    background: radial-gradient(
+        97.57% 210.75% at 0.9% 2.98%,
+        rgba(255,255,255,0.10) 0%,
+        rgba(255,255,255,0) 100%
+    );
+
+    flex-shrink: 0;
+}
+
+@keyframes scrollLogos {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
