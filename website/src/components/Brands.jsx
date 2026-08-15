@@ -1,9 +1,12 @@
 import { ArrowRight } from "lucide-react";
-import brandLogo1 from "../assets/brand-01.png";
-import brandLogo2 from "../assets/brand-02.png";
-import brandLogo3 from "../assets/brand-03.png";
-import brandLogo4 from "../assets/brand-04.png";
-import brandLogo5 from "../assets/brand-05.png";
+import brandLogo1 from "../assets/brand-1.png";
+import brandLogo2 from "../assets/brand-2.png";
+import brandLogo3 from "../assets/brand-3.png";
+import brandLogo4 from "../assets/brand-4.png";
+import brandLogo5 from "../assets/brand-5.png";
+import brandLogo6 from "../assets/brand-6.png";
+import brandLogo8 from "../assets/brand-8.png";
+import brandLogo9 from "../assets/brand-9.png";
 
 
 const brands = [
@@ -12,37 +15,41 @@ const brands = [
   { name: "Brand Three", logo: brandLogo3 },
   { name: "Brand Four", logo: brandLogo4 },
   { name: "Brand Five", logo: brandLogo5 },
+  { name: "Brand Six", logo: brandLogo6 },
+  { name: "Brand Seven", logo: brandLogo8 },
+  { name: "Brand Eight", logo: brandLogo9 },
+  
 ];
 
 export default function Brands() {
   const duplicated = [...brands, ...brands];
 
   return (
-    <section className="py-20 bg-teal-deep overflow-hidden">
+    <section className="py-20 bg-(--color-bg) overflow-hidden">
       <div className="w-full px-16 md:px-20 flex flex-col md:flex-row items-center md:items-start gap-10 md:gap-20">
         {/* left text block */}
         <div className="flex-shrink-0 md:w-[320px] text-center md:text-left">
-          <h2 className="font-display font-bold text-3xl md:text-[48px] text-white leading-tight">
+          <h2 className="font-display font-bold text-3xl md:text-[48px] text-(--color-heading-sub-1) leading-tight">
             Powered by industry-leading brands
           </h2>
           
            <a href="#solutions"
-            className="inline-flex items-center gap-1 text-gold text-sm font-semibold mt-4 hover:text-white transition-colors duration-200"
+            className="link-sub inline-flex items-center gap-1 text-sm font-semibold mt-4 transition-colors duration-200"
           >
-            See our solutions <ArrowRight className="w-3.5 h-3.5" />
+            See Our Solutions <ArrowRight className="w-3.5 h-3.5" />
           </a>
         </div>
 
         {/* right side scrolling marquee */}
         <div
-          className="flex-1 w-full overflow-hidden"
+          className="flex-1 w-full overflow-x-hidden overflow-y-visible"
           style={{
             maskImage: "linear-gradient(to right, black 85%, transparent 100%)",
             WebkitMaskImage: "linear-gradient(to right, black 85%, transparent 100%)",
           }}
         >
           <div
-            className="flex"
+            className="flex py-4"
             style={{
               columnGap: "30px",
               width: "max-content",
@@ -52,18 +59,13 @@ export default function Brands() {
             {duplicated.map((b, i) => (
               <div
                 key={`${b.name}-${i}`}
-                className="relative rounded-lg flex items-center justify-center shrink-0 border border-white/10 hover:border-white/30 hover:scale-110 hover:z-10 transition-all duration-300"
-                style={{
-                  width: "208px",
-                  height: "120px",
-                  background:
-                    "radial-gradient(97.57% 210.75% at 0.9% 2.98%, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0) 100%)",
-                }}
+                className="brand-logo-card relative rounded-lg flex items-center justify-center shrink-0 hover:scale-110 hover:z-10 transition-all duration-300"
+                style={{ width: "208px", height: "120px" }}
               >
                 <img
                   src={b.logo}
                   alt={b.name}
-                  className="max-h-34 max-w-[90%] object-contain grayscale brightness-0 invert opacity-70 hover:opacity-100 hover:grayscale-0 hover:brightness-100 hover:invert-0 transition-all duration-200"
+                  className="brand-logo-img max-h-16 max-w-[60%] object-contain opacity-70 hover:opacity-100"
                 />
               </div>
             ))}

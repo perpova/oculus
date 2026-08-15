@@ -36,7 +36,7 @@ const socialLinks = [
   { icon: socialIcons.facebook, href: "#" },
 ];
 
-const noticeAtCollectionIcon = (
+/*const noticeAtCollectionIcon = (
   <svg viewBox="0 0 300 150" className="w-8 h-4" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <clipPath id="pillClip">
@@ -68,7 +68,7 @@ const noticeAtCollectionIcon = (
       strokeLinecap="round"
     />
   </svg>
-);
+);*/
 
 const legalLinks = [
   "Privacy Policy",
@@ -80,10 +80,10 @@ const legalLinks = [
 
 export default function Footer() {
   return (
-    <div className="w-full bg-teal-deep px-16 md:px-20">
+    <div className="w-full bg-(--color-bg-nav) px-16 md:px-20">
       {/* Follow us + disclaimer */}
       <div
-        className="border-t border-white/10 py-10 flex flex-col lg:flex-row lg:items-start lg:justify-between"
+        className="border-t border-white/30 py-10 flex flex-col lg:flex-row lg:items-start lg:justify-between"
         style={{ rowGap: "28px" }}
       >
         <div className="flex items-center" style={{ columnGap: "16px" }}>
@@ -95,7 +95,7 @@ export default function Footer() {
               <a
                 key={i}
                 href={href}
-                className="w-10 h-10 rounded-lg border border-white/15 flex items-center justify-center text-white/80 hover:text-white hover:border-white/35 transition-colors"
+                className="q-link w-10 h-10 rounded-lg border border-white/15 flex items-center justify-center text-white/80 hover:text-white hover:border-white/35 transition-colors"
               >
                 {icon}
               </a>
@@ -103,7 +103,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <p className="font-body text-xs text-white/50 leading-relaxed max-w-2xl">
+        <p className="font-body text-xs text-white/70 leading-relaxed max-w-2xl">
           Oculus International is a licensed security services provider operating
           under applicable Sri Lankan security industry regulations. All CCTV,
           access control, and alarm monitoring services are delivered by trained
@@ -113,35 +113,35 @@ export default function Footer() {
       </div>
 
       {/* Legal links */}
-      <div className="border-t border-white/10 py-6 flex flex-wrap items-center">
+      <div className="border-t border-white/30 py-6 flex flex-wrap items-center">
         {legalLinks.map((label, i) => (
             <div key={label} className="flex items-center">
-            {i > 0 && <span className="h-4 w-px bg-white/25 mx-4" />}
+            {i > 0 && <span className="h-4 w-px bg-white/30 mx-4" />}
             
             <a    href="#"
-                className="font-body text-xs text-white/60 hover:text-white transition-colors"
+                className="q-link font-body text-xs text-white/60 hover:text-white transition-colors"
             >
                 {label}
             </a>
             </div>
         ))}
 
-         <span className="h-4 w-px bg-white/25 mx-4" />
+         <span className="h-4 w-px bg-white/30 mx-4" />
 
   
           <a  href="#notice-at-collection"
             title="Notice at Collection"
-            className="flex items-center gap-1.5 font-body text-xs text-white/60 hover:text-white transition-colors"
+            className="q-link flex items-center gap-1.5 font-body text-xs text-white/60 hover:text-white transition-colors"
           >
             Notice at Collection
-            {noticeAtCollectionIcon}
+            {/*{noticeAtCollectionIcon}*/}
           </a>
         </div>
 
       {/* Logo + copyright */}
-      <div className="border-t border-white/10 py-8 flex flex-col sm:flex-row sm:items-center sm:justify-between" style={{ rowGap: "16px" }}>
+      <div className="border-t border-white/30 py-8 flex flex-col sm:flex-row sm:items-center sm:justify-between" style={{ rowGap: "16px" }}>
         <img src={oculusLogo} alt="Oculus International" className="h-12 w-auto" />
-        <p className="font-body text-xs text-white/50">
+        <p className="font-body text-xs text-white/70">
           © 2026 All rights reserved by Oculus International.
         </p>
       </div>

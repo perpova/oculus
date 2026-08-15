@@ -1,4 +1,4 @@
-import { ShieldCheck, Zap, Headset, Camera } from "lucide-react";
+import { ShieldCheck, Zap, Headset, Settings2 } from "lucide-react";
 
 const stats = [
   { id: "0001", value: "15+", label: "Years of Experience", size: "lg" },
@@ -10,33 +10,33 @@ const stats = [
 const features = [
   {
     id: "0001",
-    icon: ShieldCheck,
-    title: "Certified Security Expertise",
-    desc: "Licensed, trained, and continuously vetted personnel across every deployment.",
+    icon: Settings2,
+    title: "Custom Adaptations",
+    desc: "Installations tailored to each industry's unique demands and our clients' commercial goals.",
   },
   {
     id: "0002",
-    icon: Zap,
-    title: "Rapid Response",
-    desc: "Dedicated monitoring teams and response units built for fast, reliable action.",
+    icon: ShieldCheck,
+    title: "Authorized Partnerships",
+    desc: "Legally authorized to distribute, install, and maintain NESS, IDTECK, WEBGATE, and IMPEGVISION systems.",
   },
   {
     id: "0003",
-    icon: Headset,
-    title: "Dedicated Account Teams",
-    desc: "A single point of contact who understands your site and its risk profile.",
+    icon: Zap,
+    title: "Punctuality & Speed",
+    desc: "Reliable turnaround from initial consultation through to final installation.",
   },
   {
     id: "0004",
-    icon: Camera,
-    title: "Modern Surveillance Tech",
-    desc: "CCTV, access control, and alarm systems integrated on one platform.",
+    icon: Headset,
+    title: "Flexible, Friendly Engineering Team",
+    desc: "An approachable team that adapts to your site's schedule and requirements.",
   },
 ];
 
 export default function WhyOculus() {
   return (
-    <section className="w-full bg-teal-deep px-16 md:px-20 py-24">
+    <section className="w-full bg-(--color-bg-nav) px-16 md:px-20 py-24">
       <div
         className="grid grid-cols-1 lg:grid-cols-2"
         style={{ columnGap: "64px", rowGap: "56px" }}
@@ -53,9 +53,10 @@ export default function WhyOculus() {
               trust you can rely on.
             </h2>
             <p className="font-body text-base text-olive-light max-w-[480px]">
-              We combine trained personnel, modern surveillance technology, and
-              round-the-clock monitoring to protect what matters most to you —
-              backed by a team that treats every site like it's the only one.
+              We are a specialist in system integration and low voltage
+              technologies (ELV). Our expertise is centered on security
+              surveillance, audio-visual environments, advanced fire safety,
+              converged networking, and specialist building controls.
             </p>
           </div>
 
@@ -66,7 +67,7 @@ export default function WhyOculus() {
           >
             {features.map((f) => (
               <div key={f.id} className="flex items-start" style={{ columnGap: "14px" }}>
-                <div className="shrink-0 w-11 h-11 rounded-full bg-[#2b5e66] flex items-center justify-center">
+                <div className="shrink-0 w-11 h-11 rounded-full bg-(--color-bg-sub) flex items-center justify-center">
                   <f.icon className="w-5 h-5 text-offwhite" strokeWidth={1.75} />
                 </div>
                 <div className="flex flex-col" style={{ rowGap: "4px" }}>
@@ -97,7 +98,7 @@ export default function WhyOculus() {
             <span className="font-display text-8xl md:text-9xl text-offwhite leading-none">
               {stats[0].value}
             </span>
-            <p className="font-body text-sm text-teal-light mt-2">{stats[0].label}</p>
+            <p className="font-body text-sm text-gold mt-2">{stats[0].label}</p>
           </div>
 
           {/* Remaining stats */}
@@ -118,7 +119,7 @@ export default function WhyOculus() {
                 <span className="font-display text-5xl md:text-6xl text-offwhite">
                   {s.value}
                 </span>
-                <p className="font-body text-xs text-teal-light mt-1 uppercase tracking-wide">
+                <p className="font-body text-xs text-gold mt-1 uppercase tracking-wide">
                   {s.label}
                 </p>
               </div>

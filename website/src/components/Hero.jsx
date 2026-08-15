@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import heroLight from "../assets/hero-light.jpeg";
-import heroDark from "../assets/hero-dark.png";
+import heroLight from "../assets/hero-light-2.png";
+import heroDark from "../assets/hero-dark-4.png";
 import { useTheme } from "../ThemeContext";
+import HeroHotspots from "./HeroHotspots";
 
 const stats = [
   { value: "10+", label: "Years Experience" },
@@ -66,6 +67,10 @@ export default function Hero() {
 
   const countProgress = easeOutCubic(Math.min(statsProgress / 0.7, 1));
 
+  // Small rotation applied to the hotspot cluster as the user scrolls
+  // through the pinned hero, settling before the next section takes over.
+  const hotspotRotation = progress * 15; // degrees — tweak max value to taste
+
   return (
     <section
       ref={sectionRef}
@@ -82,8 +87,11 @@ export default function Hero() {
         {/* Overlay for text readability */}
         <div
           className="absolute inset-0"
-          style={{ background: "rgba(0, 0, 0, 0.15)" }}
+          style={{ background: "rgba(0, 0, 0, 0)" }}
         />
+
+        {/* Icon hotspots + connecting lines, anchored to the horn-speaker in the image */}
+        <HeroHotspots rotation={hotspotRotation} />
 
         <div className="relative max-w-7xl mx-auto px-6 grid md:grid-cols-[3fr_2fr] gap-12 items-center w-full">
           <div className="relative min-h-[420px]">

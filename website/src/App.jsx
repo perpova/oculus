@@ -8,6 +8,7 @@ import WhyChooseUs from "./components/WhyChooseUs"
 import TakeFirstStep from "./components/TakeFirstStep"
 import QuickLinks from "./components/QuickLinks"
 import Footer from "./components/Footer"
+import ProductElite from "./components/ProductElite"
 //import ProductPromotion from "./components/ProductPromotion";
 //import ChatWidget from "./components/ChatWidget";
 
@@ -20,6 +21,7 @@ export default function App() {
       <Hero />
       <TrustedBy />
       <Solutions />
+      <ProductElite />
       <Industries />
       <Brands />
       {/*<ProductPromotion />*/}

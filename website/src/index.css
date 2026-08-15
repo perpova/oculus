@@ -32,6 +32,8 @@
   --color-surface-raised: #ffffff;
   --color-border: var(--color-olive-light);
   --color-border-strong: var(--color-teal-light);
+  --color-bg-sub: var(--color-teal-deep);
+  --color-bg-sub-2: var(--color-white);
 
   /* Text */
   --color-text: var(--color-teal-dark);
@@ -40,6 +42,9 @@
   --color-text-inverse: var(--color-offwhite);
   --color-heading: var(--color-teal-dark);
   --color-heading-main: var(--color-teal-dark);
+  --color-heading-sub-1:var(--color-teal-dark);
+  --color-heading-sub-2:var(--color-gold);
+  /*--color-heading-sub-3:var(--color-teal-deep);*/
 
 
   /* Links */
@@ -70,6 +75,15 @@
   --color-focus-ring: var(--color-teal-light);
   --color-success: var(--color-green-light);
   --color-shadow: rgba(43, 94, 102, 0.12);
+
+  /* Brand logo marquee */
+  --logo-filter: grayscale(1) brightness(0) invert(0) opacity(0.65);
+  --logo-border: rgba(43, 94, 102, 0.15);       /* teal-tinted, not pure black */
+  --logo-border-hover: rgba(43, 94, 102, 0.4);
+  --logo-card-glow: rgba(43, 94, 102, 0.04);
+  --logo-card-bg: rgba(43, 94, 102, 0.03);      /* subtle fill so card reads as a card */
+
+  --color-decor-line: rgba(43, 94, 102, 0.50); /* SVG circles, teal-tinted for light bg */
 }
 
 /* ================= DARK MODE ================= */
@@ -82,6 +96,8 @@
   --color-surface-raised: #2b4b56;
   --color-border: var(--color-teal-dark);
   --color-border-strong: var(--color-teal-light);
+  --color-bg-sub: var(--color-teal-dark);
+  --color-bg-sub-2: var(--color-teal-dark);
 
   /* Text */
   --color-text: var(--color-offwhite);
@@ -90,7 +106,9 @@
   --color-text-inverse: var(--color-charcoal);
   --color-heading: var(--color-gold);
   --color-heading-main: var(--color-gold);
-
+  --color-heading-sub-1:var(--color-white);
+  --color-heading-sub-2:var(--color-gold);
+  /*--color-heading-sub-3:var(--color-gold);*/
 
   /* Links */
   --color-link: var(--color-offwhite);
@@ -120,6 +138,14 @@
   --color-focus-ring: var(--color-gold);
   --color-success: var(--color-green-light);
   --color-shadow: rgba(0, 0, 0, 0.35);
+
+  /* Brand logo marquee */
+  --logo-filter: grayscale(1) brightness(0) invert(1);
+  --logo-border: rgba(255, 255, 255, 0.1);
+  --logo-border-hover: rgba(255, 255, 255, 0.3);
+  --logo-card-glow: rgba(255, 255, 255, 0.05);
+
+  --color-decor-line: rgba(255, 255, 255, 0.30); /* SVG circles, white for dark bg */
 }
 
 * {
@@ -149,12 +175,30 @@ body {
   color: var(--color-heading-main);
 }
 
+
+
 a {
   color: var(--color-link);
   transition: color 0.2s ease;
 }
 a:hover {
   color: var(--color-link-hover);
+}
+
+.link-sub {
+  color: var(--color-teal-light);
+  transition: color 0.2s ease;
+}
+.link-sub:hover {
+  color: var(--color-gold);
+}
+
+.q-link {
+  color: var(--color-white);
+  transition: color 0.2s ease;
+}
+.q-link:hover {
+  color: var(--color-gold);
 }
 
 /* ---- Buttons ---- */
@@ -198,6 +242,17 @@ a:hover {
   background: var(--color-accent-hover);
   color: var(--color-text);
 }
+
+.btn-accent-sub {
+  background: var(--color-gold-light);
+  color: var(--color-teal-deep);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.btn-accent-sub:hover {
+  background: var(--color-teal-dark);
+  color: var(--color-white);
+}
+
 /* ---- Cards / surfaces ---- */
 .card {
   background: var(--color-surface);
@@ -290,6 +345,30 @@ a:hover {
     );
 
     flex-shrink: 0;
+}
+
+.brand-logo-card {
+  border: 1.5px solid var(--logo-border);
+  background: var(--logo-card-bg),
+    radial-gradient(
+      97.57% 210.75% at 0.9% 2.98%,
+      var(--logo-card-glow) 0%,
+      rgba(0, 0, 0, 0) 100%
+    );
+  box-shadow: 0 2px 8px var(--color-shadow);
+  transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+.brand-logo-card:hover {
+  border-color: var(--logo-border-hover);
+  box-shadow: 0 4px 16px var(--color-shadow);
+}
+
+.brand-logo-img {
+  filter: var(--logo-filter);
+  transition: filter 0.2s ease, opacity 0.2s ease;
+}
+.brand-logo-card:hover .brand-logo-img {
+  filter: none;
 }
 
 @keyframes scrollLogos {

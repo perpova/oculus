@@ -10,22 +10,22 @@ const aiTools = [
     name: "ChatGPT",
     logo: chatgptLogo,
     href: `https://chatgpt.com/?q=${encodedPrompt}`,
-    colors: { backgroundColor: "rgba(255, 255, 255, 0.25)", border: "0.8px solid rgba(244, 244, 244, 0.6)" },
-    hoverClass: "hover:!bg-[rgba(255,255,255,0.35)]",
+    colors: { backgroundColor: "rgba(199, 203, 106, 0.25)", border: "0.8px solid rgba(199, 203, 106, 0.85)" },
+    hoverClass: "hover:!bg-[rgba(199,203,106,0.5)]",
   },
   {
     name: "Claude",
     logo: claudeLogo,
     href: `https://claude.ai/new?q=${encodedPrompt}`,
-    colors: { backgroundColor: "rgba(217, 119, 87, 0.18)", border: "0.8px solid rgba(217, 119, 87, 0.6)" },
-    hoverClass: "hover:!bg-[rgba(217,119,87,0.3)]",
+    colors: { backgroundColor: "rgba(130, 183, 115, 0.25)", border: "0.8px solid rgba(130, 183, 115, 0.85)" },
+    hoverClass: "hover:!bg-[rgba(130,183,115,0.5)]",
   },
   {
     name: "Gemini",
     logo: geminiLogo,
     href: `https://gemini.google.com/app?q=${encodedPrompt}`,
-    colors: { backgroundColor: "rgba(66, 133, 244, 0.18)", border: "0.8px solid rgba(66, 133, 244, 0.6)" },
-    hoverClass: "hover:!bg-[rgba(66,133,244,0.3)]",
+    colors: { backgroundColor: "rgba(73, 158, 125, 0.25)", border: "0.8px solid rgba(73, 158, 125, 0.85)" },
+    hoverClass: "hover:!bg-[rgba(73,158,125,0.5)]",
   },
 ];
 
@@ -85,7 +85,7 @@ const contactDetails = [
 
 export default function NewsletterSection() {
   return (
-    <div className="w-full bg-teal-deep px-16 md:px-20 py-16">
+    <div className="w-full bg-(--color-bg-nav) px-16 md:px-20 py-16">
       {/* Top row — newsletter + AI overview */}
       <div
         className="flex flex-col lg:flex-row lg:items-start lg:justify-between"
@@ -95,7 +95,7 @@ export default function NewsletterSection() {
           <h3 className="font-body font-semibold text-white text-base" style={{ marginBottom: "16px" }}>
             Subscribe to our newsletter
           </h3>
-          <form className="flex items-center rounded-lg bg-[#0a2438] border border-white/10 max-w-[580px] p-1.5">
+          <form className="flex items-center rounded-lg bg-(--color-bg-sub) border border-white/10 max-w-[580px] p-1.5">
             <input
               type="email"
               required
@@ -135,7 +135,7 @@ export default function NewsletterSection() {
       </div>
 
       {/* Divider */}
-      <div className="h-px w-full bg-white/10 mt-12 mb-10" />
+      <div className="h-px w-full bg-white/30 mt-12 mb-10" />
 
       {/* Quick Links + Solutions + Industries + Resources + Contact */}
       <div
@@ -143,13 +143,13 @@ export default function NewsletterSection() {
         style={{ columnGap: "40px", rowGap: "32px" }}
       >
         <div className="flex flex-col" style={{ rowGap: "18px" }}>
-          <h3 className="font-display font-bold text-xl text-white">Quick Links</h3>
+          <h3 className="font-display font-bold text-xl text-gold">Quick Links</h3>
           <div className="flex flex-col" style={{ rowGap: "12px" }}>
             {quickLinks.map((link) => (
               <div key={link.label} className="flex items-center" style={{ gap: "8px" }}>
                 
                 <a  href={link.href}
-                  className="font-body text-sm text-white/85 hover:text-white transition-colors"
+                  className="q-link font-body text-sm text-white/85 hover:text-white transition-colors"
                 >
                   {link.label}
                 </a>
@@ -157,7 +157,7 @@ export default function NewsletterSection() {
                   <span
                     className="font-body text-white font-semibold whitespace-nowrap"
                     style={{
-                      backgroundColor: "#2b5e66",
+                      backgroundColor: "var(--color-bg-sub)",
                       fontSize: "11px",
                       padding: "3px 8px",
                       borderRadius: "4px",
@@ -173,13 +173,13 @@ export default function NewsletterSection() {
         </div>
 
         <div className="flex flex-col" style={{ rowGap: "18px" }}>
-          <h3 className="font-display font-bold text-xl text-white">Solutions</h3>
+          <h3 className="font-display font-bold text-xl text-gold">Solutions</h3>
           <div className="flex flex-col" style={{ rowGap: "12px" }}>
             {solutionsLinks.map((link) => (
               
               <a  key={link.label}
                 href={link.href}
-                className="font-body text-sm text-white/85 hover:text-white transition-colors"
+                className="q-link font-body text-sm text-white/85 hover:text-white transition-colors"
               >
                 {link.label}
               </a>
@@ -188,13 +188,13 @@ export default function NewsletterSection() {
         </div>
 
         <div className="flex flex-col" style={{ rowGap: "18px" }}>
-          <h3 className="font-display font-bold text-xl text-white">Industries</h3>
+          <h3 className="font-display font-bold text-xl text-gold">Industries</h3>
           <div className="flex flex-col" style={{ rowGap: "12px" }}>
             {industriesLinks.map((link) => (
               
               <a  key={link.label}
                 href={link.href}
-                className="font-body text-sm text-white/85 hover:text-white transition-colors"
+                className="q-link font-body text-sm text-white/85 hover:text-white transition-colors"
               >
                 {link.label}
               </a>
@@ -203,13 +203,13 @@ export default function NewsletterSection() {
         </div>
 
         <div className="flex flex-col" style={{ rowGap: "18px" }}>
-          <h3 className="font-display font-bold text-xl text-white">Resources</h3>
+          <h3 className="font-display font-bold text-xl text-gold">Resources</h3>
           <div className="flex flex-col" style={{ rowGap: "12px" }}>
             {resourcesLinks.map((link) => (
               
               <a  key={link.label}
                 href={link.href}
-                className="font-body text-sm text-white/85 hover:text-white transition-colors"
+                className="q-link font-body text-sm text-white/85 hover:text-white transition-colors"
               >
                 {link.label}
               </a>
@@ -218,14 +218,14 @@ export default function NewsletterSection() {
         </div>
 
         <div className="flex flex-col" style={{ rowGap: "18px" }}>
-          <h3 className="font-display font-bold text-xl text-white">Contact</h3>
+          <h3 className="font-display font-bold text-xl text-gold">Contact</h3>
           <div className="flex flex-col" style={{ rowGap: "12px" }}>
             {contactDetails.map((item) =>
               item.href ? (
                 
                 <a  key={item.label}
                   href={item.href}
-                  className="font-body text-sm text-white/85 hover:text-white transition-colors"
+                  className="q-link font-body text-sm text-white/85 hover:text-white transition-colors"
                 >
                   {item.label}
                 </a>

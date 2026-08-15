@@ -33,7 +33,7 @@ const industries = [
 
 export default function Industries() {
   return (
-    <section id="industries" className="py-20 bg-teal-deep">
+    <section id="industries" className="py-20 bg-(--color-bg-nav)">
       <div className="w-full px-16 md:px-20">
         <span className="text-gold font-semibold text-[18px] tracking-wide uppercase">Trusted Across Sectors</span>
         <h2 className="font-display font-normal text-3xl md:text-[56px] text-white mt-2">Industries We Serve</h2>
@@ -48,11 +48,11 @@ export default function Industries() {
               className={`group relative flex flex-col justify-between p-8 min-h-[420px] rounded-2xl bg-white/5 ${ind.hoverBg} transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:z-10`}
             >
               <div>
-                <h3 className="font-display font-bold text-2xl text-white">{ind.title}</h3>
+                <h3 className="font-display font-bold text-2xl text-gold group-hover:text-teal-deep transition-colors duration-300">{ind.title}</h3>
                 <p className="text-white/60 group-hover:text-white/85 text-sm mt-3 transition-colors duration-300">
                   {ind.desc}
                 </p>
-                <a href="#contact" className="inline-flex items-center gap-1 text-gold group-hover:text-white text-sm font-semibold mt-4 transition-colors duration-300">
+                <a href="#contact" className="btn-accent-sub inline-flex items-center gap-2 text-sm font-semibold mt-4 px-1.5 py-0.5 rounded-lg transition-colors duration-300 hover:gap-3">
                   Learn more <ArrowRight className="w-3.5 h-3.5" />
                 </a>
               </div>
