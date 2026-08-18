@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import {
   Menu,
   X,
@@ -39,23 +40,24 @@ import logoCompact from "../assets/company-logo-2.png";
 import ThemeToggle from "./ThemeToggle";
 
 const navLinks = [
-  { label: "Home", href: "#home" },
+  { label: "Home", to: "/" },
   {
     label: "Solutions",
     href: "#solutions",
+    activePrefix: "/solutions", // any /solutions/... route keeps this item highlighted
     dropdown: [
-      { label: "Smart Home Solutions", desc: "Automation for modern living", icon: Home },
-      { label: "Smart Office Solutions", desc: "Connected, efficient workspaces", icon: Building },
-      { label: "IP/Analogue Telephony", desc: "Reliable voice communication systems", icon: Phone },
-      { label: "Structured Cabling", desc: "The backbone of your network", icon: Cable },
-      { label: "Nurse Calling Solutions", desc: "Fast, reliable patient assistance", icon: BellRing },
-      { label: "Pipe Music Systems", desc: "Ambient audio for any space", icon: Music },
-      { label: "Access Control & Attendance", desc: "Manage entry and track attendance", icon: Fingerprint },
-      { label: "Guard Tour Systems", desc: "Verify and log patrol routes", icon: Footprints },
-      { label: "Wired & Wireless Networking", desc: "Robust connectivity infrastructure", icon: Wifi },
-      { label: "IP TV & MATV Solutions", desc: "Centralized television distribution", icon: Tv },
-      { label: "Public Address Systems", desc: "Clear announcements, building-wide", icon: Speaker },
-      { label: "Hotel & Restaurant Management", desc: "Integrated hospitality technology", icon: UtensilsCrossed },
+      { label: "Smart Home Solutions", desc: "Automation for modern living", icon: Home, slug: "smart-home" },
+      { label: "Smart Office Solutions", desc: "Connected, efficient workspaces", icon: Building, slug: "smart-office" },
+      { label: "IP/Analogue Telephony", desc: "Reliable voice communication systems", icon: Phone, slug: "ip-telephony" },
+      { label: "Structured Cabling", desc: "The backbone of your network", icon: Cable, slug: "structured-cabling" },
+      { label: "Nurse Calling Solutions", desc: "Fast, reliable patient assistance", icon: BellRing, slug: "nurse-calling" },
+      { label: "Pipe Music Systems", desc: "Ambient audio for any space", icon: Music, slug: "pipe-music" },
+      { label: "Access Control & Attendance", desc: "Manage entry and track attendance", icon: Fingerprint, slug: "access-control" },
+      { label: "Guard Tour Systems", desc: "Verify and log patrol routes", icon: Footprints, slug: "guard-tour" },
+      { label: "Wired & Wireless Networking", desc: "Robust connectivity infrastructure", icon: Wifi, slug: "networking" },
+      { label: "IP TV & MATV Solutions", desc: "Centralized television distribution", icon: Tv, slug: "ip-tv-matv" },
+      { label: "Public Address Systems", desc: "Clear announcements, building-wide", icon: Speaker, slug: "public-address" },
+      { label: "Hotel & Restaurant Management", desc: "Integrated hospitality technology", icon: UtensilsCrossed, slug: "hotel-restaurant" },
     ],
   },
 
@@ -108,7 +110,70 @@ const navLinks = [
 // with the `h-24` class below (h-24 = 6rem = 96px).
 const NAV_HEIGHT_DEFAULT = 96;
 
+// Renders the inner content of one dropdown row (icon + label + desc),
+// shared between the <Link> and <a> variants below so markup stays in sync.
+// isActive locks in the same visual treatment the hover state normally gives.
+function DropdownItemContent({ item, isActive }) {
+  return (
+    <>
+      <span
+        className={`flex items-center justify-center w-9 h-9 rounded-lg transition-colors shrink-0 ${
+          isActive
+            ? "bg-(--color-accent) text-(--color-bg)"
+            : "bg-(--color-bg) text-(--color-text)/70 group-hover/item:bg-(--color-accent) group-hover/item:text-(--color-bg)"
+        }`}
+      >
+        <item.icon className="w-4 h-4" />
+      </span>
+      <span
+        className={`flex flex-col px-2 py-1 rounded-md transition-colors ${
+          isActive ? "bg-(--color-accent)/15" : "group-hover/item:bg-(--color-accent)/15"
+        }`}
+      >
+        <span
+          className={`flex items-center gap-1 font-medium ${
+            isActive
+              ? "text-(--color-primary-disabled)"
+              : "text-(--color-text-nav) group-hover/item:text-(--color-primary-disabled)"
+          }`}
+        >
+          {item.label}
+          <ArrowRight
+            className={`w-3.5 h-3.5 transition-all duration-200 ${
+              isActive
+                ? "opacity-100 translate-x-0"
+                : "opacity-0 -translate-x-1 group-hover/item:opacity-100 group-hover/item:translate-x-0"
+            }`}
+          />
+        </span>
+        <span className="text-xs text-(--color-text-nav)/50">{item.desc}</span>
+      </span>
+    </>
+  );
+}
+
+// If the dropdown item has a `slug`, it routes to its solution page via
+// React Router. Otherwise it falls back to a plain anchor (for dropdowns
+// like Products/Industries/Resources that don't have routed pages yet).
+function DropdownItem({ item, parentHref, onClick, className, pathname }) {
+  const isActive = Boolean(item.slug) && pathname === `/solutions/${item.slug}`;
+
+  if (item.slug) {
+    return (
+      <Link to={`/solutions/${item.slug}`} onClick={onClick} className={className}>
+        <DropdownItemContent item={item} isActive={isActive} />
+      </Link>
+    );
+  }
+  return (
+    <a href={parentHref} onClick={onClick} className={className}>
+      <DropdownItemContent item={item} isActive={false} />
+    </a>
+  );
+}
+
 export default function Navbar() {
+  const { pathname } = useLocation(); // current URL path, e.g. "/solutions/nurse-calling"
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [compact, setCompact] = useState(false);
@@ -145,7 +210,7 @@ export default function Navbar() {
           compact ? "h-14" : "h-24"
         }`}
       >
-        <a href="#home" className="flex items-center gap-3">
+        <Link to="/" className="flex items-center gap-3">
           <img
             src={compact ? logoCompact : logo}
             alt="Oculus International"
@@ -153,17 +218,44 @@ export default function Navbar() {
               compact ? "h-16" : "h-22"
             }`}
           />
-        </a>
+        </Link>
 
         <ul className="hidden md:flex items-center gap-8 text-base font-medium text-(--color-text)/90">
           {navLinks.map((link) => {
             const isWide = link.dropdown && link.dropdown.length > 6;
+
+            // Active if this is the exact route ("to"), or if we're anywhere
+            // under its section ("activePrefix", e.g. any /solutions/... page).
+            const isTopActive = link.to
+              ? pathname === link.to
+              : link.activePrefix
+              ? pathname.startsWith(link.activePrefix)
+              : false;
+
             return (
               <li key={link.label} className="relative group">
-                <a href={link.href} className="flex items-center gap-1 py-2 hover:text-(--color-accent) transition-colors">
-                  {link.label}
-                  {link.dropdown && <ChevronDown className="w-3.5 h-3.5 opacity-60 transition-transform duration-800 ease-out group-hover:-rotate-180" />}
-                </a>
+                {link.to ? (
+                  <Link
+                    to={link.to}
+                    className={`flex items-center gap-1 py-2 transition-colors ${
+                      isTopActive ? "text-(--color-accent)" : "hover:text-(--color-accent)"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                ) : (
+                  <a
+                    href={link.href}
+                    className={`flex items-center gap-1 py-2 transition-colors ${
+                      isTopActive ? "text-(--color-accent)" : "hover:text-(--color-accent)"
+                    }`}
+                  >
+                    {link.label}
+                    {link.dropdown && (
+                      <ChevronDown className="w-3.5 h-3.5 opacity-60 transition-transform duration-800 ease-out group-hover:-rotate-180" />
+                    )}
+                  </a>
+                )}
                 {link.dropdown && (
                   <div
                     className={`absolute left-0 top-full mt-1 bg-(--color-surface) rounded-xl shadow-lg border border-(--color-border)/50 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all ${
@@ -171,22 +263,13 @@ export default function Navbar() {
                     }`}
                   >
                     {link.dropdown.map((item) => (
-                      <a
+                      <DropdownItem
                         key={item.label}
-                        href="#solutions"
+                        item={item}
+                        parentHref={link.href}
+                        pathname={pathname}
                         className="group/item flex items-center gap-3 px-4 py-2.5 text-sm text-(--color-text)/80"
-                      >
-                        <span className="flex items-center justify-center w-9 h-9 rounded-lg bg-(--color-bg) text-(--color-text)/70 transition-colors group-hover/item:bg-(--color-accent) group-hover/item:text-(--color-bg) shrink-0">
-                          <item.icon className="w-4 h-4" />
-                        </span>
-                        <span className="flex flex-col px-2 py-1 rounded-md transition-colors group-hover/item:bg-(--color-accent)/15">
-                          <span className="flex items-center gap-1 font-medium text-(--color-text-nav) group-hover/item:text-(--color-primary-disabled)">
-                            {item.label}
-                            <ArrowRight className="w-3.5 h-3.5 opacity-0 -translate-x-1 transition-all duration-200 group-hover/item:opacity-100 group-hover/item:translate-x-0" />
-                          </span>
-                          <span className="text-xs text-(--color-text-nav)/50">{item.desc}</span>
-                        </span>
-                      </a>
+                      />
                     ))}
                   </div>
                 )}
@@ -214,28 +297,49 @@ export default function Navbar() {
 
       {open && (
         <div className="md:hidden bg-(--color-bg) border-t border-(--color-text)/10 px-6 py-4 space-y-3">
-          {navLinks.map((link) => (
-            <div key={link.label}>
-              <a href={link.href} className="block text-sm font-medium text-(--color-text)" onClick={() => setOpen(false)}>
-                {link.label}
-              </a>
-              {link.dropdown && (
-                <div className="pl-4 mt-2 space-y-2">
-                  {link.dropdown.map((item) => (
-                    <a
-                      key={item.label}
-                      href="#solutions"
-                      className="flex items-center gap-2 text-sm text-(--color-text)/70"
-                      onClick={() => setOpen(false)}
-                    >
-                      <item.icon className="w-4 h-4" />
-                      {item.label}
-                    </a>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
+          {navLinks.map((link) => {
+            const isTopActive = link.to
+              ? pathname === link.to
+              : link.activePrefix
+              ? pathname.startsWith(link.activePrefix)
+              : false;
+
+            return (
+              <div key={link.label}>
+                {link.to ? (
+                  <Link
+                    to={link.to}
+                    className={`block text-sm font-medium ${isTopActive ? "text-(--color-accent)" : "text-(--color-text)"}`}
+                    onClick={() => setOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                ) : (
+                  <a
+                    href={link.href}
+                    className={`block text-sm font-medium ${isTopActive ? "text-(--color-accent)" : "text-(--color-text)"}`}
+                    onClick={() => setOpen(false)}
+                  >
+                    {link.label}
+                  </a>
+                )}
+                {link.dropdown && (
+                  <div className="pl-4 mt-2 space-y-2">
+                    {link.dropdown.map((item) => (
+                      <DropdownItem
+                        key={item.label}
+                        item={item}
+                        parentHref={link.href}
+                        pathname={pathname}
+                        onClick={() => setOpen(false)}
+                        className="flex items-center gap-2 text-sm text-(--color-text)/70"
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
           <a href="#contact" className="btn-accent inline-block text-sm font-semibold px-5 py-2.5 rounded-lg">
             Contact Us
           </a>

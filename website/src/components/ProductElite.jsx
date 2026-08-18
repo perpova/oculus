@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { LayoutGrid, Cpu, Smartphone, Radar, Siren as SirenIcon } from "lucide-react";
 import keypadImg from "../assets/elite_gemini_keypad.png";
 import controlPanelImg from "../assets/elite_eci-removebg-preview.png";
 import cloudAppImg from "../assets/elite_real_phone.png";
@@ -12,25 +13,17 @@ import sirenImg from "../assets/elite_siren.png";
  * New Zealand) — Oculus International is the sole authorized
  * distributor for South Asia.
  *
- * Design rules for this section:
- * - Images only, no icon library. Every device is represented by its
- *   own photo (tabs + diagram). If a photo fails to load, it falls
- *   back to a plain monogram tile rather than a generic icon.
- * - Two colors, full stop: --color-text (headings/body, opacity for
- *   hierarchy) and --color-accent (the single highlight color for
- *   emphasis and active/alert states). No secondary hue scale.
- * - The section sits on --color-surface as a distinct panel, with
- *   cards inside on --color-bg, so it reads as a deliberate "spotlight"
- *   section in both light and dark mode rather than blending into the
- *   page background.
- *
- * Product photos are imported from src/assets/elite/ at the top of
- * this file, matching your Navbar's logo-import pattern. Point those
- * five import paths at your real product renders — filenames below
- * are placeholders (keypad.png, control-panel.png, cloud-app.png,
- * pir-sensor.png, siren.png).
+ * This simulation is illustrative, not a literal recreation of a
+ * real EC-i panel's firmware — but it mirrors real panel behavior
+ * closely enough to give a visitor an accurate mental model:
+ * - Real exit delay (5s countdown) before arming completes
+ * - Zone-specific alarm reporting, not a blanket "everything alerts"
+ * - Panel status LEDs that behave like real supervisory indicators
+ * - Audible feedback (key beep, countdown tick, confirm tones, siren)
  * ---------------------------------------------------------------
  */
+
+const EXIT_DELAY_SECONDS = 5;
 
 const DEVICES = [
   {
@@ -40,6 +33,7 @@ const DEVICES = [
     image: keypadImg,
     node: { top: "18%", left: "14%" },
     role: "Local control at the door",
+    zone: "Zone 1 · Front Entry",
     specs: [
       { label: "Role", value: "User interface & local control" },
       { label: "Power", value: "12V DC via system bus" },
@@ -57,6 +51,7 @@ const DEVICES = [
     image: controlPanelImg,
     node: { top: "46%", left: "50%" },
     role: "The system's central brain",
+    zone: "Control Panel",
     specs: [
       { label: "Role", value: "Central processing unit" },
       { label: "Capacity", value: "Up to 248 zones, 2,000 users" },
@@ -74,6 +69,7 @@ const DEVICES = [
     image: cloudAppImg,
     node: { top: "16%", left: "86%" },
     role: "Control from anywhere",
+    zone: "Remote Client",
     specs: [
       { label: "Role", value: "Remote monitoring & control" },
       { label: "Connectivity", value: "Encrypted HTTPS over 4G / Wi-Fi" },
@@ -91,6 +87,7 @@ const DEVICES = [
     image: pirSensorImg,
     node: { top: "80%", left: "16%" },
     role: "Detects genuine intrusion",
+    zone: "Zone 4 · Hallway",
     specs: [
       { label: "Role", value: "Intrusion detection" },
       { label: "Coverage", value: "12m, pet-immune up to 25kg" },
@@ -108,6 +105,7 @@ const DEVICES = [
     image: sirenImg,
     node: { top: "80%", left: "84%" },
     role: "Audible & visual deterrent",
+    zone: "Zone 7 · Perimeter",
     specs: [
       { label: "Role", value: "Audible & visual deterrent" },
       { label: "Output", value: "120dB siren + LED strobe" },
@@ -120,12 +118,13 @@ const DEVICES = [
   },
 ];
 
-const HIGHLIGHTS = [
-  { label: "South Asia", detail: "Sole authorized distributor" },
-  { label: "New Zealand", detail: "Designed by Arrowhead Alarm Products" },
-  { label: "248 Zones", detail: "Scales from homes to large sites" },
-  { label: "One Bus", detail: "Keypads, sensors & sirens, one line" },
-];
+const DEVICE_ICONS = {
+  keypad: LayoutGrid,
+  panel: Cpu,
+  app: Smartphone,
+  pir: Radar,
+  siren: SirenIcon,
+};
 
 function monogram(name) {
   return name
@@ -156,6 +155,12 @@ function DeviceImage({ device, className }) {
   );
 }
 
+function DeviceIcon({ device, className }) {
+  const Icon = DEVICE_ICONS[device.id];
+  if (!Icon) return null;
+  return <Icon className={className} strokeWidth={2} />;
+}
+
 function StatusPill({ tone, children }) {
   const toneClasses =
     tone === "alert"
@@ -179,11 +184,37 @@ function StatusPill({ tone, children }) {
   );
 }
 
+// Two small status LEDs on the panel tile — steady alternating blink
+// normally, fast flash during diagnostics/alarm, like a real panel's
+// supervisory + comms LEDs.
+function PanelLeds({ fast }) {
+  return (
+    <div className="absolute right-1.5 top-1.5 flex gap-1">
+      <span
+        className={`h-1.5 w-1.5 rounded-full bg-(--color-accent) ${
+          fast ? "animate-[ledFast_0.15s_linear_infinite]" : "animate-[ledSlow_1.4s_ease-in-out_infinite]"
+        }`}
+      />
+      <span
+        className={`h-1.5 w-1.5 rounded-full bg-(--color-accent)/60 ${
+          fast ? "animate-[ledFast_0.15s_linear_infinite_0.07s]" : "animate-[ledSlow_1.4s_ease-in-out_infinite_0.5s]"
+        }`}
+      />
+      <style>{`
+        @keyframes ledSlow { 0%,100% { opacity: .25 } 50% { opacity: 1 } }
+        @keyframes ledFast { 0%,100% { opacity: .2 } 50% { opacity: 1 } }
+      `}</style>
+    </div>
+  );
+}
+
 export default function ProductElite() {
   const [activeId, setActiveId] = useState("panel");
   const [armed, setArmed] = useState(false);
   const [arming, setArming] = useState(false);
+  const [exitCount, setExitCount] = useState(EXIT_DELAY_SECONDS);
   const [alarm, setAlarm] = useState(false);
+  const [alarmZone, setAlarmZone] = useState(null);
   const [motionPulse, setMotionPulse] = useState(false);
   const [sirenTest, setSirenTest] = useState(false);
   const [diagnostic, setDiagnostic] = useState(false);
@@ -191,28 +222,146 @@ export default function ProductElite() {
   const active = DEVICES.find((d) => d.id === activeId);
   const panel = DEVICES.find((d) => d.id === "panel");
 
+  // --- Audio: Web Audio API, refs so context persists across renders ---
+  const audioCtxRef = useRef(null);
+  const sirenNodesRef = useRef(null);
+
+  const getAudioCtx = useCallback(() => {
+    if (!audioCtxRef.current) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      audioCtxRef.current = new AC();
+    }
+    if (audioCtxRef.current.state === "suspended") {
+      audioCtxRef.current.resume();
+    }
+    return audioCtxRef.current;
+  }, []);
+
+  const playBeep = useCallback(
+    (freq = 1000, duration = 0.08, gain = 0.04) => {
+      const ctx = getAudioCtx();
+      if (!ctx) return;
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.connect(g);
+      g.connect(ctx.destination);
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq, ctx.currentTime);
+      g.gain.setValueAtTime(gain, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+      osc.start();
+      osc.stop(ctx.currentTime + duration);
+    },
+    [getAudioCtx]
+  );
+
+  const startSiren = useCallback(() => {
+    const ctx = getAudioCtx();
+    if (!ctx || sirenNodesRef.current) return;
+    const osc1 = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc1.type = "sawtooth";
+    osc2.type = "triangle";
+    osc1.connect(g);
+    osc2.connect(g);
+    g.connect(ctx.destination);
+    g.gain.setValueAtTime(0.1, ctx.currentTime);
+    osc1.frequency.setValueAtTime(600, ctx.currentTime);
+    osc2.frequency.setValueAtTime(800, ctx.currentTime);
+    osc1.start();
+    osc2.start();
+    let flip = false;
+    const interval = setInterval(() => {
+      if (!audioCtxRef.current) return;
+      const t = audioCtxRef.current.currentTime;
+      const base = flip ? 600 : 900;
+      osc1.frequency.linearRampToValueAtTime(base, t + 0.15);
+      osc2.frequency.linearRampToValueAtTime(base + 150, t + 0.15);
+      flip = !flip;
+    }, 150);
+    sirenNodesRef.current = { osc1, osc2, gain: g, interval };
+  }, [getAudioCtx]);
+
+  const stopSiren = useCallback(() => {
+    const nodes = sirenNodesRef.current;
+    if (!nodes) return;
+    clearInterval(nodes.interval);
+    try {
+      nodes.osc1.stop();
+      nodes.osc2.stop();
+    } catch {
+      /* already stopped */
+    }
+    nodes.osc1.disconnect();
+    nodes.osc2.disconnect();
+    nodes.gain.disconnect();
+    sirenNodesRef.current = null;
+  }, []);
+
+  // Stop siren + close audio context on unmount
+  useEffect(() => {
+    return () => {
+      stopSiren();
+      audioCtxRef.current?.close?.();
+    };
+  }, [stopSiren]);
+
+  // --- Exit-delay countdown, runs via useEffect so it cleans up properly ---
+  useEffect(() => {
+    if (!arming) return;
+    setExitCount(EXIT_DELAY_SECONDS);
+    let count = EXIT_DELAY_SECONDS;
+    const interval = setInterval(() => {
+      count -= 1;
+      if (count > 0) {
+        setExitCount(count);
+        playBeep(count <= 2 ? 1200 : 800, count <= 2 ? 0.05 : 0.08);
+      } else {
+        clearInterval(interval);
+        setArming(false);
+        setArmed(true);
+        playBeep(1400, 0.06);
+        setTimeout(() => playBeep(1400, 0.06), 120);
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [arming, playBeep]);
+
   function toggleArm() {
+    playBeep(1000, 0.06);
     if (alarm) {
       setAlarm(false);
+      setAlarmZone(null);
       setArmed(false);
       setArming(false);
+      stopSiren();
+      playBeep(1200, 0.06);
+      setTimeout(() => playBeep(1200, 0.06), 120);
       return;
     }
     if (armed) {
       setArmed(false);
+      playBeep(1200, 0.06);
+      setTimeout(() => playBeep(1200, 0.06), 120);
       return;
     }
     setArming(true);
-    setTimeout(() => {
-      setArming(false);
-      setArmed(true);
-    }, 1200);
   }
 
   function testMotion() {
+    playBeep(1200, 0.05);
+    const pir = DEVICES.find((d) => d.id === "pir");
     if (armed) {
       setAlarm(true);
-      setTimeout(() => setAlarm(false), 3500);
+      setAlarmZone(pir.zone);
+      startSiren();
+      setTimeout(() => {
+        setAlarm(false);
+        setAlarmZone(null);
+        stopSiren();
+      }, 4000);
     } else {
       setMotionPulse(true);
       setTimeout(() => setMotionPulse(false), 1600);
@@ -220,11 +369,17 @@ export default function ProductElite() {
   }
 
   function testSiren() {
+    playBeep(900, 0.05);
     setSirenTest(true);
-    setTimeout(() => setSirenTest(false), 2000);
+    startSiren();
+    setTimeout(() => {
+      setSirenTest(false);
+      stopSiren();
+    }, 2000);
   }
 
   function runDiagnostic() {
+    playBeep(1100, 0.05);
     setDiagnostic(true);
     setTimeout(() => setDiagnostic(false), 1600);
   }
@@ -247,18 +402,18 @@ export default function ProductElite() {
 
   function deviceStatusLabel(device) {
     if (device.action === "arm") {
-      if (alarm) return { text: "Alarm active", tone: "alert" };
-      if (arming) return { text: "Arming…", tone: "active" };
+      if (alarm) return { text: `Alarm — ${alarmZone}`, tone: "alert" };
+      if (arming) return { text: `Exit delay: 0${exitCount}s`, tone: "active" };
       if (armed) return { text: "Armed", tone: "active" };
       return { text: "Disarmed", tone: "idle" };
     }
     if (device.action === "diagnostic") {
-      if (alarm) return { text: "Alarm active", tone: "alert" };
+      if (alarm) return { text: `Alarm — ${alarmZone}`, tone: "alert" };
       if (diagnostic) return { text: "Running diagnostic…", tone: "active" };
       return { text: armed ? "System armed" : "System ready", tone: armed ? "active" : "idle" };
     }
     if (device.action === "motion") {
-      if (alarm) return { text: "Motion — alarm triggered", tone: "alert" };
+      if (alarm) return { text: `${active.zone} tripped`, tone: "alert" };
       if (motionPulse) return { text: "Motion detected (test)", tone: "active" };
       return { text: "Zone clear", tone: "idle" };
     }
@@ -273,7 +428,7 @@ export default function ProductElite() {
   function actionButtonLabel(device) {
     if (device.action === "arm") {
       if (alarm) return "Disarm system";
-      if (arming) return "Arming…";
+      if (arming) return `Arming… Exit 0${exitCount}s`;
       if (armed) return "Disarm (simulate)";
       return device.ctaLabel;
     }
@@ -285,50 +440,36 @@ export default function ProductElite() {
 
   const activeStatus = deviceStatusLabel(active);
   const overallStatus = alarm
-    ? { text: "Alarm triggered", tone: "alert" }
+    ? { text: `Alarm — ${alarmZone}`, tone: "alert" }
     : armed || arming
-    ? { text: arming ? "Arming…" : "Armed", tone: "active" }
+    ? { text: arming ? `Arming… 0${exitCount}s` : "Armed", tone: "active" }
     : { text: "Disarmed", tone: "idle" };
 
+  const panelLedsFast = diagnostic || alarm;
+
   return (
-    <section className="relative bg-[#d9d9d9] px-6 py-24 sm:py-32">
-      <div className="mx-auto max-w-6xl">
-        {/* Eyebrow */}
-        <div className="mb-6 flex justify-center">
+    <section className="relative bg-(--color-bg-sub-3) px-4 sm:px-8 lg:px-12 pt-16 pb-24 sm:pt-20 sm:pb-32">
+      <div className="mx-auto max-w-[1350px]">
+        <div>
           <span className="inline-flex items-center rounded-full border border-(--color-border)/60 bg-(--color-bg) px-4 py-1.5 font-mono text-xs tracking-wide text-(--color-accent)">
             Exclusive EliteControl Partner — South Asia
           </span>
+
+          <h2 className="font-display font-normal text-3xl md:text-[54px] text-(--color-heading) mt-8">
+            The EliteControl Ecosystem
+          </h2>
+
+          <p className="mt-6 w-full text-sm leading-relaxed text-(--color-text)/80 sm:text-base">
+            Oculus International is the only authorized distributor of Arrowhead
+            Alarm Products' EliteControl systems in South Asia. Explore how the
+            keypad, panel, app and field devices work as one connected system —
+            not a shelf of separate parts.
+          </p>
         </div>
 
-        {/* Heading */}
-        <h2 className="text-center font-[Space_Grotesk] text-4xl font-bold tracking-tight text-(--color-text) sm:text-5xl">
-          The <span className="text-(--color-accent)">EliteControl</span> Ecosystem
-        </h2>
-        <p className="mx-auto mt-5 max-w-2xl text-center text-base leading-relaxed text-(--color-text)/60 sm:text-lg">
-          Oculus International is the only authorized distributor of Arrowhead
-          Alarm Products' EliteControl systems in South Asia. Explore how the
-          keypad, panel, app and field devices work as one connected system —
-          not a shelf of separate parts.
-        </p>
-
-        {/* Trust / credibility strip */}
-        <div className="mx-auto mt-12 grid max-w-4xl grid-cols-2 gap-4 sm:grid-cols-4">
-          {HIGHLIGHTS.map((h) => (
-            <div
-              key={h.label}
-              className="rounded-xl border border-(--color-border)/60 bg-(--color-bg) px-4 py-5 text-center"
-            >
-              <p className="text-lg font-bold text-(--color-text)">{h.label}</p>
-              <p className="mt-0.5 text-xs text-(--color-text)/50">{h.detail}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Main interactive layout */}
         <div className="mt-16 grid gap-8 lg:grid-cols-[1.15fr_1fr] lg:items-start">
           {/* Left: hotspot diagram */}
           <div className="relative min-h-[420px] rounded-2xl border border-(--color-border)/60 bg-(--color-bg) lg:min-h-[560px]">
-            {/* Status ribbon */}
             <div className="flex items-center justify-between border-b border-(--color-border)/60 px-5 py-3">
               <span className="text-xs font-semibold uppercase tracking-wide text-(--color-text)/50">
                 Live system status
@@ -379,12 +520,13 @@ export default function ProductElite() {
                       type="button"
                       onClick={() => setActiveId(device.id)}
                       aria-label={`View ${device.name} details`}
-                      className={`flex h-16 w-16 items-center justify-center rounded-xl border-2 bg-(--color-surface) p-2 transition-colors duration-200 sm:h-20 sm:w-20 ${
+                      className={`relative flex h-20 w-20 items-center justify-center rounded-xl border-2 bg-(--color-surface)/50 p-2 transition-colors duration-200 sm:h-24 sm:w-24 ${
                         status !== "idle" || isActiveTab
                           ? "border-(--color-accent)"
                           : "border-(--color-border)/60"
                       }`}
                     >
+                      {device.id === "panel" && <PanelLeds fast={panelLedsFast} />}
                       <DeviceImage device={device} className="h-full w-full" />
                     </button>
                   </div>
@@ -405,11 +547,11 @@ export default function ProductElite() {
                     onClick={() => setActiveId(d.id)}
                     className={`flex items-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-semibold transition-colors duration-200 ${
                       isActive
-                        ? "border-(--color-accent) bg-(--color-accent)/10 text-(--color-accent)"
-                        : "border-(--color-border)/60 bg-(--color-bg) text-(--color-text)/60 hover:border-(--color-border)"
+                        ? "border-(--color-accent) bg-(--color-accent) text-(--color-text-nav)/80"
+                        : "border-(--color-heading-main)/40 bg-(--color-heading-main)/10 text-(--color-text) hover:border-(--color-border)"
                     }`}
                   >
-                    <DeviceImage device={d} className="h-6 w-6 shrink-0" />
+                    <DeviceIcon device={d} className="h-5 w-5 shrink-0" />
                     <span className="truncate">{d.name}</span>
                   </button>
                 );
@@ -419,7 +561,9 @@ export default function ProductElite() {
             <div className="mt-5 rounded-2xl border border-(--color-border)/60 bg-(--color-bg) p-6">
               <p className="text-xs font-semibold uppercase tracking-wide text-(--color-accent)">{active.role}</p>
               <h3 className="mt-1 font-[Space_Grotesk] text-2xl font-bold text-(--color-text)">{active.name}</h3>
-              <p className="mt-1 font-mono text-xs tracking-wide text-(--color-text)/40">{active.model}</p>
+              <p className="mt-1 font-mono text-xs tracking-wide text-(--color-text)/40">
+                {active.model} · {active.zone}
+              </p>
 
               <div className="mt-5 divide-y divide-(--color-border)/60 border-y border-(--color-border)/60">
                 {active.specs.map((spec) => (
@@ -440,7 +584,8 @@ export default function ProductElite() {
               <button
                 type="button"
                 onClick={() => handleAction(active)}
-                className="mt-3 flex w-full items-center justify-center rounded-lg border border-(--color-accent) px-4 py-2.5 text-sm font-semibold text-(--color-accent) transition-colors duration-200 hover:bg-(--color-accent)/10"
+                disabled={arming && active.action !== "arm"}
+                className="mt-3 flex w-full items-center justify-center rounded-lg border border-(--color-accent) px-4 py-2.5 text-sm font-semibold text-(--color-accent) transition-colors duration-200 hover:bg-(--color-accent)/10 disabled:opacity-50"
               >
                 {actionButtonLabel(active)}
               </button>
@@ -448,7 +593,6 @@ export default function ProductElite() {
           </div>
         </div>
 
-        {/* Closing CTA */}
         <div className="mt-16 flex flex-col items-center gap-4 rounded-2xl border border-(--color-border)/60 bg-(--color-bg) px-6 py-10 text-center sm:flex-row sm:justify-between sm:text-left">
           <div>
             <p className="text-lg font-bold text-(--color-text)">Ready to bring EliteControl to your property?</p>
@@ -456,8 +600,8 @@ export default function ProductElite() {
               Talk to our team about a system sized for your home, office or site.
             </p>
           </div>
-          <a
-            href="#contact"
+          
+          <a  href="#contact"
             className="btn-accent inline-flex shrink-0 items-center justify-center rounded-lg px-6 py-3 text-sm font-semibold"
           >
             Request a Consultation

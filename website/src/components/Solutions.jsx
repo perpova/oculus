@@ -1,9 +1,10 @@
 import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import solution_1_Img from "../assets/SmartHomeSolutions.jpg";
-import solution_2_Img from "../assets/Office.jpeg";
+import solution_1_Img from "../assets/solution-1.jpg";
+import solution_2_Img from "../assets/solution-2.jpeg";
 import solution_3_Img from "../assets/solution-3.jpg";
-import solution_4_Img from "../assets/wired-network.jpg";
+import solution_4_Img from "../assets/solution-4.jpg";
 import solution_5_Img from "../assets/solution-5.png";
 import solution_6_Img from "../assets/solution-6.2.jpeg";
 import solution_7_Img from "../assets/solution-7.jpg";
@@ -13,78 +14,80 @@ import solution_10_Img from "../assets/solution-10.jpg";
 import solution_11_Img from "../assets/solution-11.jpg";
 import solution_12_Img from "../assets/solution-12.jpg";
 
+// `slug` on each entry must match the `slug` field in data/solutions.js
+// exactly — that's what the routed solution page looks up.
 const solutions = [
   {
     label: "Smart Home Solutions",
+    slug: "smart-home",
     image: solution_1_Img,
     desc: "Bring your home environment directly to your fingertips with advanced automation controls.",
-    href: "#",
   },
   {
     label: "Smart Office Solutions",
+    slug: "smart-office",
     image: solution_2_Img,
     desc: "Control office workflows intelligently, optimize energy use, and create a connected work ecosystem.",
-    href: "#",
   },
   {
     label: "IP/Analogue Telephony",
+    slug: "ip-telephony",
     image: solution_3_Img,
     desc: "Implement high-clarity internal communication systems to boost corporate productivity.",
-    href: "#",
   },
   {
     label: "Structured Cabling",
+    slug: "structured-cabling",
     image: solution_4_Img,
     desc: "Organize data channels, optical fibers, and core networking lines to keep operations neat and clean.",
-    href: "#",
   },
   {
     label: "Nurse Calling Solutions",
+    slug: "nurse-calling",
     image: solution_5_Img,
     desc: "Ensure instant patient-to-nurse signaling structures for critical care and clinical environments.",
-    href: "#",
   },
   {
     label: "Pipe Music Systems",
+    slug: "pipe-music",
     image: solution_6_Img,
     desc: "Deliver premium background music setups to elevate ambient guest experiences in venues.",
-    href: "#",
   },
   {
     label: "Access Control & Attendance",
+    slug: "access-control",
     image: solution_7_Img,
     desc: "Control physical entry gates, monitor valuable areas, and track employee logs automatically.",
-    href: "#",
   },
   {
     label: "Guard Tour Systems",
+    slug: "guard-tour",
     image: solution_8_Img,
     desc: "Monitor security guard patrols, track checkpoints, and ensure absolute safety coverage.",
-    href: "#",
   },
   {
     label: "Wired & Wireless Networking",
+    slug: "networking",
     image: solution_9_Img,
     desc: "Establish high-bandwidth routers, firewalls, and switches to connect your enterprise seamlessly.",
-    href: "#",
   },
   {
     label: "IP TV & MATV Solutions",
+    slug: "ip-tv-matv",
     image: solution_10_Img,
     desc: "Broadcast high-definition television programs and channels across multi-room facilities.",
-    href: "#",
   },
   {
     label: "Public Address Systems",
+    slug: "public-address",
     image: solution_11_Img,
     desc: "Broadcast clear announcements across large assemblies, stadiums, and building zones.",
-    href: "#",
   },
   {
     label: "Hotel & Restaurant Management",
+    slug: "hotel-restaurant",
     image: solution_12_Img,
     desc: "Integrate hotel logic, booking systems, and point-of-sale terminals to streamline hospitality.",
-    href: "#",
   },
 ];
 
@@ -172,8 +175,9 @@ export default function Solutions() {
           }}
         >
           {solutions.map((s) => (
-            
-            <a  href={s.href}
+
+            <Link
+              to={`/solutions/${s.slug}`}
               key={s.label}
               className="group flex flex-col relative cursor-pointer shrink-0"
               style={{
@@ -212,7 +216,7 @@ export default function Solutions() {
               </div>
 
               <p className="text-olive text-sm">{s.desc}</p>
-            </a>
+            </Link>
           ))}
         </div>
       </div>
