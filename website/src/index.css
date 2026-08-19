@@ -47,6 +47,9 @@
   --color-heading-sub-1:var(--color-teal-dark);
   --color-heading-sub-2:var(--color-gold);
   --color-heading-sub-3:var(--color-teal-dark);
+  --color-nav:var(--color-gold);
+  --color-text-1: var(--color-teal);
+  --color-text-2:var(--color-green-light);
 
 
   /* Links */
@@ -113,6 +116,9 @@
   --color-heading-sub-1:var(--color-white);
   --color-heading-sub-2:var(--color-gold);
   --color-heading-sub-3:var(--color-teal-deep);
+  --color-nav:var(--color-gold);
+  --color-text-1: var(--color-offwhite);
+  --color-text-2:var(--color-white);
 
   /* Links */
   --color-link: var(--color-offwhite);
@@ -180,13 +186,14 @@ body {
 }
 
 
-
+@layer base {
 a {
   color: var(--color-link);
   transition: color 0.2s ease;
 }
 a:hover {
   color: var(--color-link-hover);
+}
 }
 
 .link-sub {

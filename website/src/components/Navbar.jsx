@@ -45,6 +45,7 @@ const navLinks = [
     label: "Solutions",
     href: "#solutions",
     activePrefix: "/solutions", // any /solutions/... route keeps this item highlighted
+    basePath: "/solutions", // where DropdownItem routes each item.slug to
     dropdown: [
       { label: "Smart Home Solutions", desc: "Automation for modern living", icon: Home, slug: "smart-home" },
       { label: "Smart Office Solutions", desc: "Connected, efficient workspaces", icon: Building, slug: "smart-office" },
@@ -64,13 +65,15 @@ const navLinks = [
   {
     label: "Products",
     href: "#products",
+    activePrefix: "/products", // any /products/... route keeps this item highlighted
+    basePath: "/products", // where DropdownItem routes each item.slug to
     dropdown: [
-      { label: "EliteControl (NZ)", desc: "Premium New Zealand-engineered security systems", icon: ShieldCheck },
-      { label: "Alarm Systems", desc: "Intrusion detection and instant alerts", icon: Siren },
-      { label: "CCTV", desc: "High-definition surveillance and monitoring", icon: Camera },
-      { label: "Access Control", desc: "Secure entry management for any facility", icon: KeyRound },
-      { label: "Attendance Systems", desc: "Accurate, automated staff time tracking", icon: UserCheck },
-      { label: "Others", desc: "Explore our full range of ELV products", icon: MoreHorizontal },
+      { label: "EliteControl (NZ)", desc: "Premium New Zealand-engineered security systems", icon: ShieldCheck, slug: "elitecontrol" },
+      { label: "Alarm Systems", desc: "Intrusion detection and instant alerts", icon: Siren, slug: "alarm-systems" },
+      { label: "CCTV", desc: "High-definition surveillance and monitoring", icon: Camera, slug: "cctv" },
+      { label: "Access Control", desc: "Secure entry management for any facility", icon: KeyRound, slug: "access-control" },
+      { label: "Attendance Systems", desc: "Accurate, automated staff time tracking", icon: UserCheck, slug: "attendance-systems" },
+      { label: "Others", desc: "Explore our full range of ELV products", icon: MoreHorizontal, slug: "others" },
     ],
   },
 
@@ -106,9 +109,12 @@ const navLinks = [
   },
 ];
 
-// Height of the navbar in its default (hero) state, in pixels. Keep in sync
-// with the `h-24` class below (h-24 = 6rem = 96px).
-const NAV_HEIGHT_DEFAULT = 96;
+// Navbar height in px: full (hero) state vs shrunk (scrolled) state.
+const NAV_HEIGHT_EXPANDED = 96; // h-24
+const NAV_HEIGHT_COMPACT = 56;  // h-14
+const LOGO_HEIGHT_EXPANDED = 88; // h-22
+const LOGO_HEIGHT_COMPACT = 64;  // h-16
+const SHRINK_DISTANCE = 150;     // px of scroll over which the shrink happens
 
 // Renders the inner content of one dropdown row (icon + label + desc),
 // shared between the <Link> and <a> variants below so markup stays in sync.
@@ -152,15 +158,19 @@ function DropdownItemContent({ item, isActive }) {
   );
 }
 
-// If the dropdown item has a `slug`, it routes to its solution page via
-// React Router. Otherwise it falls back to a plain anchor (for dropdowns
-// like Products/Industries/Resources that don't have routed pages yet).
-function DropdownItem({ item, parentHref, onClick, className, pathname }) {
-  const isActive = Boolean(item.slug) && pathname === `/solutions/${item.slug}`;
+// If the dropdown item has a `slug`, it routes via React Router to
+// `${basePath}/${slug}` — e.g. Solutions items go to /solutions/nurse-calling,
+// Products items go to /products/cctv. `basePath` comes from the parent
+// nav link, so the same component serves every dropdown section.
+// Items with no slug (Industries, Resources, Company — no routed pages yet)
+// fall back to a plain anchor.
+function DropdownItem({ item, parentHref, basePath, onClick, className, pathname }) {
+  const to = item.slug && basePath ? `${basePath}/${item.slug}` : null;
+  const isActive = Boolean(to) && pathname === to;
 
-  if (item.slug) {
+  if (to) {
     return (
-      <Link to={`/solutions/${item.slug}`} onClick={onClick} className={className}>
+      <Link to={to} onClick={onClick} className={className}>
         <DropdownItemContent item={item} isActive={isActive} />
       </Link>
     );
@@ -176,26 +186,23 @@ export default function Navbar() {
   const { pathname } = useLocation(); // current URL path, e.g. "/solutions/nurse-calling"
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [compact, setCompact] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0); // 0 = full height, 1 = shrunk
 
   useEffect(() => {
-    // Cache the hero element once; if your hero section doesn't use id="home",
-    // update this selector to match.
-    const heroEl = document.getElementById("home");
-
     const onScroll = () => {
-      setScrolled(window.scrollY > 20);
-
-      const heroHeight = heroEl ? heroEl.offsetHeight : window.innerHeight;
-      // Stay full-height while any part of the hero is still under the navbar;
-      // shrink once we've scrolled past it.
-      setCompact(window.scrollY > heroHeight - NAV_HEIGHT_DEFAULT);
+      const y = window.scrollY;
+      setScrolled(y > 20);
+      setScrollProgress(Math.min(y / SHRINK_DISTANCE, 1));
     };
 
     onScroll();
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Interpolated values driving the smooth shrink
+  const navHeight = NAV_HEIGHT_EXPANDED - (NAV_HEIGHT_EXPANDED - NAV_HEIGHT_COMPACT) * scrollProgress;
+  const logoHeight = LOGO_HEIGHT_EXPANDED - (LOGO_HEIGHT_EXPANDED - LOGO_HEIGHT_COMPACT) * scrollProgress;
 
   return (
     <header
@@ -206,17 +213,15 @@ export default function Navbar() {
       }`}
     >
       <nav
-        className={`w-full flex items-center justify-between px-8 md:px-12 transition-all duration-300 ease-in-out ${
-          compact ? "h-14" : "h-24"
-        }`}
+        style={{ height: `${navHeight}px` }}
+        className="w-full flex items-center justify-between px-8 md:px-12 transition-[height] duration-150 ease-out"
       >
         <Link to="/" className="flex items-center gap-3">
           <img
-            src={compact ? logoCompact : logo}
+            src={scrollProgress > 0.5 ? logoCompact : logo}
             alt="Oculus International"
-            className={`w-auto transition-all duration-300 ease-in-out ${
-              compact ? "h-16" : "h-22"
-            }`}
+            style={{ height: `${logoHeight}px` }}
+            className="w-auto transition-[height] duration-150 ease-out"
           />
         </Link>
 
@@ -225,7 +230,8 @@ export default function Navbar() {
             const isWide = link.dropdown && link.dropdown.length > 6;
 
             // Active if this is the exact route ("to"), or if we're anywhere
-            // under its section ("activePrefix", e.g. any /solutions/... page).
+            // under its section ("activePrefix", e.g. any /solutions/... or
+            // /products/... page).
             const isTopActive = link.to
               ? pathname === link.to
               : link.activePrefix
@@ -238,16 +244,16 @@ export default function Navbar() {
                   <Link
                     to={link.to}
                     className={`flex items-center gap-1 py-2 transition-colors ${
-                      isTopActive ? "text-(--color-accent)" : "hover:text-(--color-accent)"
+                      isTopActive ? "text-(--color-nav)" : "hover:text-(--color-nav)"
                     }`}
                   >
                     {link.label}
                   </Link>
                 ) : (
-                  <a
-                    href={link.href}
+                  
+                  <a  href={link.href}
                     className={`flex items-center gap-1 py-2 transition-colors ${
-                      isTopActive ? "text-(--color-accent)" : "hover:text-(--color-accent)"
+                      isTopActive ? "text-(--color-nav)" : "hover:text-(--color-nav)"
                     }`}
                   >
                     {link.label}
@@ -267,6 +273,7 @@ export default function Navbar() {
                         key={item.label}
                         item={item}
                         parentHref={link.href}
+                        basePath={link.basePath}
                         pathname={pathname}
                         className="group/item flex items-center gap-3 px-4 py-2.5 text-sm text-(--color-text)/80"
                       />
@@ -298,8 +305,9 @@ export default function Navbar() {
       {open && (
         <div className="md:hidden bg-(--color-bg) border-t border-(--color-text)/10 px-6 py-4 space-y-3">
           {navLinks.map((link) => {
+            const cleanPath = pathname.replace(/\/+$/, "") || "/";
             const isTopActive = link.to
-              ? pathname === link.to
+              ? cleanPath === link.to
               : link.activePrefix
               ? pathname.startsWith(link.activePrefix)
               : false;
@@ -315,8 +323,8 @@ export default function Navbar() {
                     {link.label}
                   </Link>
                 ) : (
-                  <a
-                    href={link.href}
+                  
+                  <a  href={link.href}
                     className={`block text-sm font-medium ${isTopActive ? "text-(--color-accent)" : "text-(--color-text)"}`}
                     onClick={() => setOpen(false)}
                   >
@@ -330,6 +338,7 @@ export default function Navbar() {
                         key={item.label}
                         item={item}
                         parentHref={link.href}
+                        basePath={link.basePath}
                         pathname={pathname}
                         onClick={() => setOpen(false)}
                         className="flex items-center gap-2 text-sm text-(--color-text)/70"
