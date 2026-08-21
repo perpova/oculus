@@ -77,14 +77,16 @@ const navLinks = [
     ],
   },
 
-  {
+    {
     label: "Industries",
     href: "#industries",
+    activePrefix: "/industries",   // keeps "Industries" highlighted on any /industries/... page
+    basePath: "/industries",       // DropdownItem routes each item to `${basePath}/${slug}`
     dropdown: [
-      { label: "Residential", desc: "Protection for homes and estates", icon: Home },
-      { label: "Government", desc: "Security for public institutions", icon: Landmark },
-      { label: "Commercial", desc: "Safeguarding offices and retail", icon: Building2 },
-      { label: "Education", desc: "Safety for schools and campuses", icon: GraduationCap },
+      { label: "Residential", desc: "Protection for homes and estates", icon: Home, slug: "residential-and-apartments" },
+      { label: "Government", desc: "Security for public institutions", icon: Landmark, slug: "government-and-defence" },
+      { label: "Commercial", desc: "Safeguarding offices and retail", icon: Building2, slug: "corporate-and-commercial" },
+      { label: "Education", desc: "Safety for schools and campuses", icon: GraduationCap, slug: "education" },
     ],
   },
   {
@@ -99,12 +101,12 @@ const navLinks = [
   },
 
   {
-    label: "Company",
-    href: "#company",
-    dropdown: [
-      { label: "About Us", desc: "Who we are and what drives us", icon: Info },
-      { label: "Careers", desc: "Join our team", icon: Briefcase },
-      { label: "Contact Us", desc: "Get in touch with our team", icon: Mail },
+  label: "Company",
+  href: "#company",
+  dropdown: [
+    { label: "About Us", desc: "Who we are and what drives us", icon: Info, to: "/about-us" },
+    { label: "Careers", desc: "Join our team", icon: Briefcase },
+    { label: "Contact Us", desc: "Get in touch with our team", icon: Mail },
     ],
   },
 ];
@@ -165,7 +167,7 @@ function DropdownItemContent({ item, isActive }) {
 // Items with no slug (Industries, Resources, Company — no routed pages yet)
 // fall back to a plain anchor.
 function DropdownItem({ item, parentHref, basePath, onClick, className, pathname }) {
-  const to = item.slug && basePath ? `${basePath}/${item.slug}` : null;
+  const to = item.to || (item.slug && basePath ? `${basePath}/${item.slug}` : null);
   const isActive = Boolean(to) && pathname === to;
 
   if (to) {
