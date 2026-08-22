@@ -1,6 +1,6 @@
 import { useParams, Navigate } from "react-router-dom";
 import SolutionTemplate from "../components/SolutionTemplate";
-import { getSolutionBySlug, getAllSolutions } from "../data/solutions";
+import { getSolutionBySlug, getAllSolutions } from "../data/Solutions";
 
 export default function SolutionPage() {
   const { slug } = useParams();

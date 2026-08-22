@@ -11,7 +11,7 @@
 
 import { useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
-import { getCategoryBySlug, getProductsByCategory } from "../data/products";
+import { getCategoryBySlug, getProductsByCategory } from "../data/Products";
 import ProductCard from "../components/products/ProductCard";
 import ProductDetailModal from "../components/products/ProductDetailModal";
 

@@ -1,9 +1,23 @@
 import { Phone, FileText, ArrowRight } from "lucide-react";
 
-export default function TakeFirstStep() {
+export default function TakeFirstStep({
+  eyebrow = "Take the First Step",
+  heading = (
+    <>
+      Your property deserves
+      <br />
+      better protection.
+    </>
+  ),
+  description = "Don't wait for an incident to take security seriously. Our team is ready to assess your premises and design a solution that fits your needs and budget — at no cost to you.",
+  phone = "tel:",
+  bgColor = "var(--color-bg-sub-2)",
+}) {
   return (
-    <section className="relative w-full overflow-hidden bg-(--color-bg-sub-2)
-     px-16 md:px-20 py-20">
+    <section
+      className="relative w-full overflow-hidden px-16 md:px-20 py-20"
+      style={{ backgroundColor: bgColor }}
+    >
       {/* Decorative background pattern */}
       <svg
         className="absolute inset-0 w-full h-full opacity-[0.5] pointer-events-none"
@@ -24,29 +38,26 @@ export default function TakeFirstStep() {
 
       <div className="relative z-10 max-w-2xl">
         <span className="text-gold font-semibold text-[18px] tracking-wide uppercase">
-          Take the First Step
+          {eyebrow}
         </span>
 
         <h2 className="font-display font-normal text-4xl md:text-[56px] text-(--color-heading-sub-1) leading-tight mt-3">
-          Your property deserves
-          <br />
-          better protection.
+          {heading}
         </h2>
 
         <p className="font-body text-(--color-text-muted) text-base mt-5 max-w-lg">
-          Don't wait for an incident to take security seriously. Our team is
-          ready to assess your premises and design a solution that fits your
-          needs and budget — at no cost to you.
+          {description}
         </p>
 
         <div className="flex flex-wrap items-center gap-4 mt-8">
           
-          <a  href="tel:"
+          <a  href={phone}
             className="btn-accent inline-flex items-center gap-2 rounded-lg bg-gold text-[#001529] font-semibold text-sm px-6 py-3.5 transition-transform duration-200 hover:scale-[1.03]"
           >
             <Phone className="w-4 h-4" />
             Call Us Now
           </a>
+
           
           <a  href="#contact"
             className="inline-flex items-center gap-2 rounded-lg border border-(--color-border-strong) text-(--color-text) font-semibold text-sm px-6 py-3.5 transition-colors duration-200 hover:bg-(--color-accent-soft)"

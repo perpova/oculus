@@ -22,6 +22,7 @@ import {
   Home,
   Building,
 } from "lucide-react";
+import TakeFirstStep from "./TakeFirstStep";
 
 /**
  * SolutionTemplate — pure presentational component. Does NOT fetch data,
@@ -125,6 +126,7 @@ export default function SolutionTemplate({ solution, otherSolutions = [] }) {
     keyFeatures = [],
     brands = [],
     faqs = [],
+    takeFirstStep = {}
   } = solution;
 
   return (
@@ -260,6 +262,11 @@ export default function SolutionTemplate({ solution, otherSolutions = [] }) {
           </div>
         </section>
       )}
+
+      {/*-------------take the 1st step----------*/}
+      <TakeFirstStep {...takeFirstStep} />
+
+
       {/* Footer is intentionally NOT here — it lives once in MainLayout,
           so it renders below every route automatically. */}
     </div>
