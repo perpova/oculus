@@ -16,6 +16,8 @@
 import { Link } from "react-router-dom";
 import { ShieldCheck } from "lucide-react";
 
+import TakeFirstStep from "./TakeFirstStep";
+
 function SolutionCard({ icon: Icon, title, description, link }) {
   return (
     <div
@@ -63,6 +65,7 @@ export default function IndustryTemplate({ industry }) {
     whyTitle,
     whyText,
     solutions = [],
+    takeFirstStep = {}
   } = industry;
 
   return (
@@ -144,6 +147,14 @@ export default function IndustryTemplate({ industry }) {
           </div>
         </section>
       )}
+
+      {/*-------------take the 1st step----------*/}
+            <TakeFirstStep {...takeFirstStep} 
+                bgColor="var(--color-bg-sub-3)"
+                eyebrowColor="var(--color-text-3)"
+            />
+      
+      
       {/* Footer is intentionally NOT here — it lives once in MainLayout,
           so it renders below every route automatically. */}
     </div>

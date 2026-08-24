@@ -14,6 +14,7 @@ import { useParams, Navigate } from "react-router-dom";
 import { getCategoryBySlug, getProductsByCategory } from "../data/Products";
 import ProductCard from "../components/products/ProductCard";
 import ProductDetailModal from "../components/products/ProductDetailModal";
+import TakeFirstStep from "../components/TakeFirstStep";
 
 export default function ProductCategoryPage() {
   const { categorySlug } = useParams();
@@ -30,6 +31,7 @@ export default function ProductCategoryPage() {
   const Icon = category.icon;
 
   return (
+    <>
     <section className="min-h-screen bg-(--color-bg-primary) px-6 pt-32 pb-14 sm:px-10 sm:pt-32 sm:pb-20">
       <div className="mx-auto max-w-7xl">
         <div className="mb-3 flex items-center gap-3">
@@ -62,6 +64,15 @@ export default function ProductCategoryPage() {
       </div>
 
       <ProductDetailModal product={activeProduct} onClose={() => setActiveProduct(null)} />
+
+       
     </section>
+      <TakeFirstStep 
+        phone="tel:+94112345678" 
+        bgColor="var(--color-bg-sub-3)"
+        eyebrowColor="var(--color-text-3)"
+      />
+    
+    </>
   );
 }

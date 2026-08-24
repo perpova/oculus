@@ -2,6 +2,7 @@ import { Phone, FileText, ArrowRight } from "lucide-react";
 
 export default function TakeFirstStep({
   eyebrow = "Take the First Step",
+  eyebrowColor= "var(--color-gold)",
   heading = (
     <>
       Your property deserves
@@ -12,6 +13,7 @@ export default function TakeFirstStep({
   description = "Don't wait for an incident to take security seriously. Our team is ready to assess your premises and design a solution that fits your needs and budget — at no cost to you.",
   phone = "tel:",
   bgColor = "var(--color-bg-sub-2)",
+  
 }) {
   return (
     <section
@@ -37,7 +39,10 @@ export default function TakeFirstStep({
       </svg>
 
       <div className="relative z-10 max-w-2xl">
-        <span className="text-gold font-semibold text-[18px] tracking-wide uppercase">
+        <span
+          className="font-semibold text-[18px] tracking-wide uppercase"
+          style={{ color: eyebrowColor }}
+        >
           {eyebrow}
         </span>
 

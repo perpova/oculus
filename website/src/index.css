@@ -36,6 +36,9 @@
   --color-bg-sub: var(--color-teal-deep);
   --color-bg-sub-2: var(--color-white);
   --color-bg-sub-3: var(--color-grey);
+  --color-bg-sub-4: var(--color-teal);
+  --color-bg-sub-5: var(--color-teal);
+  --color-border-2: var(--color-white);
 
   /* Text */
   --color-text: var(--color-teal-dark);
@@ -50,7 +53,8 @@
   --color-nav:var(--color-gold);
   --color-text-1: var(--color-teal);
   --color-text-2:var(--color-green-light);
-
+  --color-eyebrow: var(--color-teal);
+  --color-text-3:var(--color-teal-light);
 
   /* Links */
   --color-link: var(--color-teal-dark);
@@ -104,6 +108,9 @@
   --color-bg-sub: var(--color-teal-dark);
   --color-bg-sub-2: var(--color-teal-dark);
   --color-bg-sub-3: var(--color-teal-dark);
+  --color-bg-sub-4: var(--color-olive);
+  --color-bg-sub-5: var(--color-teal-deep);
+  --color-border-2: var(--color-gold);
 
 
   /* Text */
@@ -119,6 +126,8 @@
   --color-nav:var(--color-gold);
   --color-text-1: var(--color-offwhite);
   --color-text-2:var(--color-white);
+  --color-eyebrow: var(--color-gold);
+  --color-text-3:var(--color-gold);
 
   /* Links */
   --color-link: var(--color-offwhite);

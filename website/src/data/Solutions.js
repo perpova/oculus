@@ -20,6 +20,15 @@ import solution_10_Img from "../assets/solution-10.jpg";
 import solution_11_Img from "../assets/solution-11.jpg";
 import solution_12_Img from "../assets/solution-12.jpg";
 
+import brandLogo1 from "../assets/brand-1.png";
+import brandLogo2 from "../assets/brand-2.png";
+import brandLogo3 from "../assets/brand-3.png";
+import brandLogo4 from "../assets/brand-4.png";
+import brandLogo5 from "../assets/brand-5.png";
+import brandLogo6 from "../assets/brand-6.png";
+import brandLogo8 from "../assets/brand-8.png";
+import brandLogo9 from "../assets/brand-9.png";
+
 export const solutions = [
   {
     slug: "smart-home",
@@ -37,7 +46,7 @@ export const solutions = [
       { icon: "shield", title: "Integrated security", description: "Cameras, alarms and access all in one ecosystem" },
       { icon: "clock", title: "Smart automation", description: "Routines and schedules that adapt to your lifestyle" },
     ],
-    brands: ["KNX", "Control4", "Ajax", "Sonos"],
+    brands: [brandLogo1, brandLogo6, brandLogo2, brandLogo3, brandLogo9],
     faqs: [
       { question: "Can this be added to an existing home, or only new builds?", answer: "Both — we offer retrofit-friendly wireless options as well as fully wired installations for new construction." },
       { question: "Can I control everything from my phone?", answer: "Yes, a single app covers lighting, climate, security and entertainment, with remote access from anywhere." },
@@ -60,7 +69,7 @@ export const solutions = [
       { icon: "clock", title: "Energy scheduling", description: "Automated shutdowns cut wasted energy after hours" },
       { icon: "fingerprint", title: "Secure workspace access", description: "Credential-based entry integrated with the same platform" },
     ],
-    brands: ["KNX", "Crestron", "Johnson Controls"],
+    brands: [brandLogo1, brandLogo6, brandLogo3, brandLogo8, brandLogo9],
     faqs: [
       { question: "Does this integrate with our existing building management system?", answer: "Yes, we support integration via BACnet, Modbus and most common BMS protocols." },
       { question: "Can meeting rooms be booked directly from the system?", answer: "Yes, room booking panels sync with your calendar and show live availability." },
@@ -82,7 +91,7 @@ export const solutions = [
       { icon: "wifi", title: "Multi-site connectivity", description: "Extension dialing between branches over the network" },
       { icon: "clock", title: "Call management", description: "Routing, voicemail-to-email and call logging" },
     ],
-    brands: ["Yeastar", "Grandstream", "Panasonic"],
+    brands: [brandLogo1, brandLogo5],
     faqs: [
       { question: "Can we keep our existing phone numbers?", answer: "Yes, number porting is supported for both IP and analogue lines." },
       { question: "Do you support hybrid setups with both IP and analogue?", answer: "Yes, hybrid PBX systems let you run both simultaneously during a phased migration." },
@@ -104,7 +113,7 @@ export const solutions = [
       { icon: "building", title: "Organized pathways", description: "Clean, labeled cable management for easy maintenance" },
       { icon: "shield", title: "Built to scale", description: "Infrastructure that supports future network growth" },
     ],
-    brands: ["Panduit", "CommScope", "Legrand"],
+    brands: [brandLogo1],
     faqs: [
       { question: "Do you provide certification testing after installation?", answer: "Yes, every run is tested and certified to the relevant category standard, with reports provided." },
     ],
@@ -125,7 +134,7 @@ export const solutions = [
       { icon: "clock", title: "Response tracking", description: "Call and response times logged for reporting" },
       { icon: "wifi", title: "Wireless or wired", description: "Flexible installation suited to any facility layout" },
     ],
-    brands: ["Ascom", "Static Systems", "Jeron"],
+    brands: [brandLogo1],
     faqs: [
       { question: "Can it integrate with our existing hospital paging system?", answer: "Yes, most nurse call systems can integrate with existing paging and PA infrastructure." },
     ],
@@ -146,7 +155,7 @@ export const solutions = [
       { icon: "speaker", title: "Announcement break-in", description: "Switch to live announcements without stopping music" },
       { icon: "wifi", title: "Streaming integration", description: "Connects with popular streaming and licensing platforms" },
     ],
-    brands: ["Bose Professional", "Bosch", "TOA"],
+    brands: [brandLogo1],
     faqs: [
       { question: "Can different rooms play different music at the same time?", answer: "Yes, each zone can run independent audio and volume levels simultaneously." },
     ],
@@ -168,7 +177,7 @@ export const solutions = [
       { icon: "clock", title: "Automated attendance", description: "Clock-in and clock-out logs sync to payroll" },
       { icon: "door", title: "Zone-based restriction", description: "Set access by time, role or department" },
     ],
-    brands: ["ZKTeco", "Hikvision", "Suprema", "HID Global", "Dahua"],
+    brands: [brandLogo1, brandLogo6, brandLogo3, brandLogo8, brandLogo9],
     faqs: [
       { question: "Can this integrate with our existing payroll software?", answer: "Yes — attendance logs sync via API or scheduled export to most common payroll and HR platforms." },
       { question: "What credential types are supported?", answer: "Fingerprint, facial recognition, RFID card, PIN code, and mobile app credentials, in any combination." },
@@ -191,7 +200,7 @@ export const solutions = [
       { icon: "clock", title: "Real-time logging", description: "Timestamped patrol records visible to management" },
       { icon: "shield", title: "Missed-patrol alerts", description: "Instant notification if a checkpoint is skipped" },
     ],
-    brands: ["GuardsPro", "Deggy", "TimeTec"],
+    brands: [brandLogo9],
     faqs: [
       { question: "Does this work without mobile network coverage?", answer: "Yes, handheld scanners store logs offline and sync once back in range." },
     ],
@@ -212,7 +221,7 @@ export const solutions = [
       { icon: "cable", title: "Enterprise switching", description: "Managed core and edge switches sized to demand" },
       { icon: "shield", title: "Network segmentation", description: "VLANs and firewalls to isolate sensitive traffic" },
     ],
-    brands: ["Cisco", "Ubiquiti", "Aruba"],
+    brands: [brandLogo3, brandLogo5],
     faqs: [
       { question: "Can this support guest Wi-Fi separate from our internal network?", answer: "Yes, guest networks are segmented from internal traffic by default." },
     ],
@@ -233,7 +242,7 @@ export const solutions = [
       { icon: "wifi", title: "IP-based delivery", description: "Content streamed over your existing network" },
       { icon: "building", title: "Custom channel branding", description: "Welcome screens and in-house channels for hotels" },
     ],
-    brands: ["Triax", "SMATV", "Zinwell"],
+    brands: [brandLogo1],
     faqs: [
       { question: "Can we add our own branded welcome channel for guests?", answer: "Yes, custom welcome screens and in-house content channels can be configured per property." },
     ],
@@ -254,7 +263,7 @@ export const solutions = [
       { icon: "flame", title: "Fire alarm integration", description: "Automatic emergency broadcast override" },
       { icon: "wifi", title: "IP-based PA", description: "Networked speakers for large or multi-site facilities" },
     ],
-    brands: ["Bosch", "TOA", "Honeywell"],
+    brands: [brandLogo3, brandLogo9],
     faqs: [
       { question: "Is this compliant with fire and life-safety codes?", answer: "Yes, our PA systems can be integrated with fire alarm panels for compliant emergency broadcast." },
     ],
@@ -275,7 +284,7 @@ export const solutions = [
       { icon: "utensils", title: "POS integration", description: "Restaurant point-of-sale synced with back office" },
       { icon: "fingerprint", title: "Guest room access", description: "Card or mobile key entry for guest rooms" },
     ],
-    brands: ["Oracle Opera", "Assa Abloy", "Onity"],
+    brands: [brandLogo3, brandLogo9],
     faqs: [
       { question: "Can guest room controls be linked to our PMS check-in/check-out?", answer: "Yes, room access and controls activate automatically on check-in and deactivate on check-out." },
     ],

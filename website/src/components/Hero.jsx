@@ -4,11 +4,28 @@ import heroDark from "../assets/hero-dark-4.png";
 import { useTheme } from "../ThemeContext";
 import HeroHotspots from "./HeroHotspots";
 
-const stats = [
-  { value: "10+", label: "Years Experience" },
-  { value: "365", label: "24/7 Monitoring" },
-  { value: "15+", label: "Global Brands" },
-];
+const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+
+// TEMP — flip to true once backend server.js is confirmed working with real DB
+const USE_REAL_API = false;
+const API_URL = "http://localhost:5000/api/hero";
+
+// TEMP mock — matches the exact columns in home_hero. Delete once API is live.
+const mockHeroData = {
+  id: 1,
+  heading_1: "Futuristic",
+  heading_2: "ELV Systems",
+  heading_3: "Engineered for Excellence",
+  text_1: "Extra Low Voltage Integration",
+  text_2:
+    "From intelligent alarm systems to high-performance CCTV networks — Sri Lanka's trusted ELV & electronic security specialist, protecting homes, businesses, and institutions island-wide.",
+  stat_1_value: "10+",
+  stat_1_label: "Years Experience",
+  stat_2_value: "365",
+  stat_2_label: "24/7 Monitoring",
+  stat_3_value: "15+",
+  stat_3_label: "Global Brands",
+};
 
 function parseStat(value) {
   const match = value.match(/^(\d+)(.*)$/);
@@ -17,14 +34,27 @@ function parseStat(value) {
     : { number: 0, suffix: value };
 }
 
-const parsedStats = stats.map((s) => ({ ...s, ...parseStat(s.value) }));
-
-const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
-
 export default function Hero() {
   const sectionRef = useRef(null);
   const [progress, setProgress] = useState(0);
+  const [content, setContent] = useState(null); // holds all fields from home_hero
   const { theme } = useTheme();
+
+  // Fetch hero content (mock now, real API later — see USE_REAL_API above)
+  useEffect(() => {
+    if (USE_REAL_API) {
+      fetch(API_URL)
+        .then((res) => res.json())
+        .then((data) => setContent(data))
+        .catch((err) => {
+          console.error("Failed to load hero content:", err);
+          setContent(mockHeroData);
+        });
+    } else {
+      const timer = setTimeout(() => setContent(mockHeroData), 300);
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   // Swap background image whenever theme changes
   useEffect(() => {
@@ -67,9 +97,23 @@ export default function Hero() {
 
   const countProgress = easeOutCubic(Math.min(statsProgress / 0.7, 1));
 
-  // Small rotation applied to the hotspot cluster as the user scrolls
-  // through the pinned hero, settling before the next section takes over.
-  const hotspotRotation = progress * 15; // degrees — tweak max value to taste
+  const hotspotRotation = progress * 15;
+
+  // Don't render until content has loaded (mock or real)
+  if (!content) {
+    return (
+      <section id="home" className="relative h-screen flex items-center justify-center">
+        <p className="text-(--color-text)/50">Loading...</p>
+      </section>
+    );
+  }
+
+  // Build the stats array FROM the fetched content, instead of a hardcoded const
+  const parsedStats = [
+    { value: content.stat_1_value, label: content.stat_1_label },
+    { value: content.stat_2_value, label: content.stat_2_label },
+    { value: content.stat_3_value, label: content.stat_3_label },
+  ].map((s) => ({ ...s, ...parseStat(s.value) }));
 
   return (
     <section
@@ -79,18 +123,15 @@ export default function Hero() {
       style={{ height: "220vh" }}
     >
       <div className="sticky top-0 h-screen overflow-hidden flex items-center">
-        {/* Background image — theme-aware via CSS variable set in useEffect above */}
         <div
           className="absolute inset-0 bg-cover bg-center transition-all duration-500"
           style={{ backgroundImage: "var(--hero-bg-image)" }}
         />
-        {/* Overlay for text readability */}
         <div
           className="absolute inset-0"
           style={{ background: "rgba(0, 0, 0, 0)" }}
         />
 
-        {/* Icon hotspots + connecting lines, anchored to the horn-speaker in the image */}
         <HeroHotspots rotation={hotspotRotation} />
 
         <div className="relative max-w-7xl mx-auto px-6 grid md:grid-cols-[3fr_2fr] gap-12 items-center w-full">
@@ -104,31 +145,28 @@ export default function Hero() {
                 transition: "opacity 0.05s linear",
               }}
             >
-             <h1 className="main-heading font-display font-bold text-4xl md:text-5xl leading-[1.5] tracking-wide">
-                Futuristic
+              <h1 className="main-heading font-display font-bold text-4xl md:text-5xl leading-[1.5] tracking-wide">
+                {content.heading_1}
                 <br />
-                <span className="text-5xl md:text-6xl">ELV Systems</span>
+                <span className="text-5xl md:text-6xl">{content.heading_2}</span>
                 <br />
-                Engineered for Excellence
+                {content.heading_3}
               </h1>
 
               <span className="inline-block mt-6 bg-(--color-text)/10 border border-(--color-text)/15 text-sm px-4 py-2 rounded-full font-body tracking-[0.3em]">
-                Extra Low Voltage Integration
+                {content.text_1}
               </span>
 
               <p className="mt-6 text-(--color-text)/70 max-w-md font-body">
-                From intelligent alarm systems to high-performance CCTV networks — Sri Lanka's trusted
-                ELV & electronic security specialist, protecting homes, businesses, and institutions island-wide.
+                {content.text_2}
               </p>
 
               <div className="mt-8 flex flex-wrap gap-4">
-                <a href="#contact"
-                    className="btn-accent font-semibold px-6 py-3 rounded-lg"
-                  >
+                <a href="#contact" className="btn-accent font-semibold px-6 py-3 rounded-lg">
                   Request a Free Quote
                 </a>
-
-                <a href="#solutions"
+                <a
+                  href="#solutions"
                   className="border border-(--color-text)/30 text-(--color-text) font-semibold px-6 py-3 rounded-lg hover:bg-(--color-text)/10 transition-colors"
                 >
                   Explore Solutions
@@ -165,9 +203,7 @@ export default function Hero() {
                 ))}
               </div>
 
-              <a href="#contact"
-                  className="btn-accent mt-10 inline-flex w-fit font-semibold px-8 py-4 rounded-lg text-lg"
-              >
+              <a href="#contact" className="btn-accent mt-10 inline-flex w-fit font-semibold px-8 py-4 rounded-lg text-lg">
                 Get in touch
               </a>
             </div>

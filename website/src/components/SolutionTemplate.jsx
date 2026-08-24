@@ -201,17 +201,24 @@ export default function SolutionTemplate({ solution, otherSolutions = [] }) {
             className="text-lg font-semibold mb-6"
             style={{ color: "var(--color-offwhite)", fontFamily: "var(--font-display)" }}
           >
-            Product Brands
+            Brands We Use
           </h2>
           <div className="flex flex-wrap gap-4">
             {brands.map((brand, i) => (
-              <span
+              <div
                 key={i}
-                className="rounded-lg px-5 py-2 text-sm font-medium"
-                style={{ backgroundColor: "var(--color-teal)", color: "var(--color-white)" }}
+                className="rounded-xl px-6 py-4 flex items-center justify-center backdrop-blur-md"
+                style={{
+                  backgroundColor: "rgba(255, 255, 255, 0.08)",
+                  border: "1px solid rgba(255, 255, 255, 0.15)",
+                }}
               >
-                {brand}
-              </span>
+                <img
+                  src={brand}
+                  alt=""
+                  className="h-14 w-auto object-contain"
+                />
+              </div>
             ))}
           </div>
         </section>
@@ -264,7 +271,10 @@ export default function SolutionTemplate({ solution, otherSolutions = [] }) {
       )}
 
       {/*-------------take the 1st step----------*/}
-      <TakeFirstStep {...takeFirstStep} />
+      <TakeFirstStep {...takeFirstStep} 
+          bgColor="var(--color-bg-sub-3)"
+          eyebrowColor="var(--color-text-3)"
+          />
 
 
       {/* Footer is intentionally NOT here — it lives once in MainLayout,
