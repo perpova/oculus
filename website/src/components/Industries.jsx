@@ -4,30 +4,36 @@ import governmentImg from "../assets/government.png";
 import commercialImg from "../assets/commercial.jpg";
 import educationImg from "../assets/education.jpg";
 
+import { Link } from "react-router-dom";
+
 const industries = [
   {
     title: "Residential",
     image: residentialImg,
     desc: "Protect your home and loved ones with smart alarm systems, HD surveillance, and app-controlled access, monitored 24/7.",
     hoverBg: "hover:bg-teal-light",
+    slug: "residential-and-apartments",
   },
   {
     title: "Government",
     image: governmentImg,
     desc: "High-assurance security infrastructure for public institutions, including multi-layer access control and encrypted surveillance.",
     hoverBg: "hover:bg-gold",
+    slug: "government-and-defence",
   },
   {
     title: "Commercial",
     image: commercialImg,
     desc: "Safeguard your business with integrated CCTV, access-controlled entry, and real-time intrusion alerts.",
     hoverBg: "hover:bg-teal-light",
+    slug: "corporate-and-commercial",
   },
   {
     title: "Education",
     image: educationImg,
     desc: "Create safe learning environments with campus-wide CCTV, controlled entry, and instant emergency alerts.",
     hoverBg: "hover:bg-gold",
+    slug: "education",
   },
 ];
 
@@ -52,9 +58,12 @@ export default function Industries() {
                 <p className="text-white/60 group-hover:text-white/85 text-sm mt-3 transition-colors duration-300">
                   {ind.desc}
                 </p>
-                <a href="#contact" className="btn-accent-sub inline-flex items-center gap-2 text-sm font-semibold mt-4 px-1.5 py-0.5 rounded-lg transition-colors duration-300 hover:gap-3">
+                <Link
+                  to={`/industries/${ind.slug}`}
+                  className="btn-accent-sub inline-flex items-center gap-2 text-sm font-semibold mt-4 px-1.5 py-0.5 rounded-lg transition-colors duration-300 hover:gap-3"
+                >
                   Learn more <ArrowRight className="w-3.5 h-3.5" />
-                </a>
+                </Link>
               </div>
 
               <div className="relative h-40 rounded-xl overflow-hidden opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">

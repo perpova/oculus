@@ -80,22 +80,22 @@ const legalLinks = [
 
 export default function Footer() {
   return (
-    <div className="w-full bg-(--color-bg-nav) px-16 md:px-20">
+    <div className="w-full bg-(--color-bg-nav) px-5 sm:px-10 md:px-16 lg:px-20">
       {/* Follow us + disclaimer */}
       <div
-        className="border-t border-white/30 py-10 flex flex-col lg:flex-row lg:items-start lg:justify-between"
-        style={{ rowGap: "28px" }}
+        className="border-t border-white/30 py-8 md:py-10 flex flex-col lg:flex-row lg:items-start lg:justify-between"
+        style={{ rowGap: "24px" }}
       >
-        <div className="flex items-center" style={{ columnGap: "16px" }}>
-          <span className="font-body font-semibold text-white text-base whitespace-nowrap">
+        <div className="flex flex-wrap items-center" style={{ columnGap: "16px", rowGap: "12px" }}>
+          <span className="font-body font-semibold text-white text-sm sm:text-base whitespace-nowrap">
             Follow us
           </span>
-          <div className="flex items-center" style={{ columnGap: "10px" }}>
+          <div className="flex items-center flex-wrap" style={{ columnGap: "10px", rowGap: "10px" }}>
             {socialLinks.map(({ icon, href }, i) => (
               <a
                 key={i}
                 href={href}
-                className="q-link w-10 h-10 rounded-lg border border-white/15 flex items-center justify-center text-white/80 hover:text-white hover:border-white/35 transition-colors"
+                className="q-link w-9 h-9 sm:w-10 sm:h-10 rounded-lg border border-white/15 flex items-center justify-center text-white/80 hover:text-white hover:border-white/35 transition-colors"
               >
                 {icon}
               </a>
@@ -113,34 +113,38 @@ export default function Footer() {
       </div>
 
       {/* Legal links */}
-      <div className="border-t border-white/30 py-6 flex flex-wrap items-center">
+      <div className="border-t border-white/30 py-5 md:py-6 flex flex-wrap items-center" style={{ rowGap: "10px" }}>
         {legalLinks.map((label, i) => (
-            <div key={label} className="flex items-center">
-            {i > 0 && <span className="h-4 w-px bg-white/30 mx-4" />}
-            
-            <a    href="#"
-                className="q-link font-body text-xs text-white/60 hover:text-white transition-colors"
+          <div key={label} className="flex items-center">
+            {i > 0 && <span className="h-4 w-px bg-white/30 mx-2.5 sm:mx-4" />}
+
+            <a
+              href="#"
+              className="q-link font-body text-xs text-white/60 hover:text-white transition-colors whitespace-nowrap"
             >
-                {label}
+              {label}
             </a>
-            </div>
+          </div>
         ))}
 
-         <span className="h-4 w-px bg-white/30 mx-4" />
+        <span className="h-4 w-px bg-white/30 mx-2.5 sm:mx-4" />
 
-  
-          <a  href="#notice-at-collection"
-            title="Notice at Collection"
-            className="q-link flex items-center gap-1.5 font-body text-xs text-white/60 hover:text-white transition-colors"
-          >
-            Notice at Collection
-            {/*{noticeAtCollectionIcon}*/}
-          </a>
-        </div>
+        <a
+          href="#notice-at-collection"
+          title="Notice at Collection"
+          className="q-link flex items-center gap-1.5 font-body text-xs text-white/60 hover:text-white transition-colors whitespace-nowrap"
+        >
+          Notice at Collection
+          {/*{noticeAtCollectionIcon}*/}
+        </a>
+      </div>
 
       {/* Logo + copyright */}
-      <div className="border-t border-white/30 py-8 flex flex-col sm:flex-row sm:items-center sm:justify-between" style={{ rowGap: "16px" }}>
-        <img src={oculusLogo} alt="Oculus International" className="h-12 w-auto" />
+      <div
+        className="border-t border-white/30 py-6 md:py-8 flex flex-col sm:flex-row sm:items-center sm:justify-between"
+        style={{ rowGap: "16px" }}
+      >
+        <img src={oculusLogo} alt="Oculus International" className="h-11 sm:h-12 w-auto" style={{ imageRendering: "auto" }} />
         <p className="font-body text-xs text-white/70">
           © 2026 All rights reserved by Oculus International.
         </p>

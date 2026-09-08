@@ -100,27 +100,27 @@ function FooterLink({ item }) {
 
 export default function NewsletterSection() {
   return (
-    <div className="w-full bg-(--color-bg-nav) px-16 md:px-20 py-16">
+    <div className="w-full bg-(--color-bg-nav) px-5 sm:px-10 md:px-16 lg:px-20 py-10 md:py-16">
       {/* Top row — newsletter + AI overview */}
       <div
         className="flex flex-col lg:flex-row lg:items-start lg:justify-between"
-        style={{ rowGap: "40px" }}
+        style={{ rowGap: "32px" }}
       >
         <div className="w-full lg:max-w-[420px]">
           <h3 className="font-body font-semibold text-white text-base" style={{ marginBottom: "16px" }}>
             Subscribe to our newsletter
           </h3>
-          <form className="flex items-center rounded-lg bg-(--color-bg-sub) border border-white/10 max-w-[580px] p-1.5">
+          <form className="flex items-center rounded-lg bg-(--color-bg-sub) border border-white/10 w-full max-w-[580px] p-1.5">
             <input
               type="email"
               required
               placeholder="Email*"
-              className="flex-1 bg-transparent px-4 text-white placeholder:text-white/40 font-body text-sm outline-none"
+              className="flex-1 min-w-0 bg-transparent px-3 sm:px-4 text-white placeholder:text-white/40 font-body text-sm outline-none"
             />
             <button
               type="submit"
-              className="bg-gold text-[#001529] font-normal text-base px-4 whitespace-nowrap hover:opacity-90 transition-opacity"
-              style={{ borderRadius: "4px", height: "41.2px", minWidth: "104px" }}
+              className="bg-gold text-[#001529] font-normal text-sm sm:text-base px-3 sm:px-4 whitespace-nowrap hover:opacity-90 transition-opacity"
+              style={{ borderRadius: "4px", height: "41.2px", minWidth: "88px" }}
             >
               Sign up
             </button>
@@ -150,12 +150,12 @@ export default function NewsletterSection() {
       </div>
 
       {/* Divider */}
-      <div className="h-px w-full bg-white/30 mt-12 mb-10" />
+      <div className="h-px w-full bg-white/30 mt-10 md:mt-12 mb-8 md:mb-10" />
 
       {/* Quick Links + Products + Resources + Contact */}
       <div
         className="grid grid-cols-2 md:grid-cols-4"
-        style={{ columnGap: "40px", rowGap: "32px" }}
+        style={{ columnGap: "24px", rowGap: "32px" }}
       >
         <div className="flex flex-col" style={{ rowGap: "18px" }}>
           <h3 className="font-display font-bold text-xl text-gold">Quick Links</h3>
@@ -206,7 +206,7 @@ export default function NewsletterSection() {
             {contactDetails.map((item) =>
               item.href ? (
                 
-              <a  key={item.label}
+                <a  key={item.label}
                   href={item.href}
                   className="q-link font-body text-sm text-white/85 hover:text-white transition-colors"
                 >
