@@ -7,6 +7,12 @@ import HeroHotspots from "./HeroHotspots";
 import { useQuoteModal } from "../context/QuoteModalContext";
 import { Link } from "react-router-dom";
 
+const stats = [
+  { value: "10+", label: "Years Experience" },
+  { value: "365", label: "24/7 Monitoring" },
+  { value: "15+", label: "Global Brands" },
+];
+
 function parseStat(value) {
   const match = value.match(/^(\d+)(.*)$/);
   return match
@@ -14,22 +20,15 @@ function parseStat(value) {
     : { number: 0, suffix: value };
 }
 
+const parsedStats = stats.map((s) => ({ ...s, ...parseStat(s.value) }));
+
 const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
 
 export default function Hero() {
   const { openQuoteModal } = useQuoteModal();
   const sectionRef = useRef(null);
   const [progress, setProgress] = useState(0);
-  const [content, setContent] = useState(null);
   const { theme } = useTheme();
-
-  // Fetch hero content from the backend API
-  useEffect(() => {
-    fetch("http://localhost:5000/api/hero")
-      .then((res) => res.json())
-      .then((data) => setContent(data))
-      .catch((err) => console.error("Failed to load hero content:", err));
-  }, []);
 
   // Swap background image whenever theme changes
   useEffect(() => {
@@ -76,22 +75,6 @@ export default function Hero() {
   // through the pinned hero, settling before the next section takes over.
   const hotspotRotation = progress * 15; // degrees — tweak max value to taste
 
-  // Don't render real content until the fetch resolves
-  if (!content) {
-    return (
-      <section id="home" className="relative h-screen flex items-center justify-center">
-        <p className="text-(--color-text)/50">Loading...</p>
-      </section>
-    );
-  }
-
-  // Build stats array from fetched content instead of a hardcoded const
-  const parsedStats = [
-    { value: content.stat_1_value, label: content.stat_1_label },
-    { value: content.stat_2_value, label: content.stat_2_label },
-    { value: content.stat_3_value, label: content.stat_3_label },
-  ].map((s) => ({ ...s, ...parseStat(s.value) }));
-
   return (
     <section
       ref={sectionRef}
@@ -99,10 +82,13 @@ export default function Hero() {
       className="relative text-(--color-text)"
       style={{ height: "220vh" }}
     >
-      <div className="sticky top-0 h-screen overflow-hidden flex items-center">
+            <div
+        className="sticky top-0 h-screen h-dvh overflow-hidden flex items-center"
+        style={{ minHeight: "100svh" }}
+      >
         {/* Background image — theme-aware via CSS variable set in useEffect above */}
         <div
-          className="absolute inset-0 bg-cover bg-center transition-all duration-500"
+          className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat transition-all duration-500"
           style={{ backgroundImage: "var(--hero-bg-image)" }}
         />
         {/* Overlay for text readability */}
@@ -114,7 +100,7 @@ export default function Hero() {
         {/* Icon hotspots + connecting lines, anchored to the horn-speaker in the image */}
         <HeroHotspots rotation={hotspotRotation} />
 
-        <div className="relative max-w-7xl mx-auto px-6 grid md:grid-cols-[3fr_2fr] gap-12 items-center w-full">
+        <div className="relative max-w-7xl mx-auto px-6 grid md:grid-cols-[3fr_2fr] gap-8 md:gap-12 items-center w-full">
           <div className="relative min-h-[420px]">
             <div
               className="absolute inset-0"
@@ -125,32 +111,33 @@ export default function Hero() {
                 transition: "opacity 0.05s linear",
               }}
             >
-              <h1 className="main-heading font-display font-bold text-4xl md:text-5xl leading-[1.5] tracking-wide">
-                {content.heading_1}
+             <h1 className="main-heading font-display font-bold text-3xl sm:text-4xl md:text-5xl leading-[1.25] md:leading-[1.5] tracking-wide">
+                Futuristic
                 <br />
-                <span className="text-5xl md:text-6xl">{content.heading_2}</span>
+                <span className="text-4xl sm:text-5xl md:text-6xl">ELV Systems</span>
                 <br />
-                {content.heading_3}
+                Engineered for Excellence
               </h1>
 
-              <span className="inline-block mt-6 bg-(--color-text)/10 border border-(--color-text)/15 text-sm px-4 py-2 rounded-full font-body tracking-[0.3em]">
-                {content.text_1}
+              <span className="inline-block mt-5 sm:mt-6 bg-(--color-text)/10 border border-(--color-text)/15 text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-body tracking-[0.2em] sm:tracking-[0.3em]">
+                Extra Low Voltage Integration
               </span>
 
               <p className="mt-6 text-(--color-text)/70 max-w-md font-body">
-                {content.text_2}
+                From intelligent alarm systems to high-performance CCTV networks — Sri Lanka's trusted
+                ELV & electronic security specialist, protecting homes, businesses, and institutions island-wide.
               </p>
 
-              <div className="mt-8 flex flex-wrap gap-4">
+              <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4">
                 <button
                   onClick={openQuoteModal}
-                  className="btn-accent font-semibold px-6 py-3 rounded-lg"
+                  className="btn-accent font-semibold px-5 py-2.5 sm:px-6 sm:py-3 rounded-lg text-sm sm:text-base text-center"
                 >
                   Request a Free Quote
                 </button>
 
                 <a href="#solutions"
-                  className="border border-(--color-text)/30 text-(--color-text) font-semibold px-6 py-3 rounded-lg hover:bg-(--color-text)/10 transition-colors"
+                  className="border border-(--color-text)/30 text-(--color-text) font-semibold px-5 py-2.5 sm:px-6 sm:py-3 rounded-lg hover:bg-(--color-text)/10 transition-colors text-sm sm:text-base text-center"
                 >
                   Explore Solutions
                 </a>
@@ -172,10 +159,10 @@ export default function Hero() {
                 <span>Production Scale</span>
               </div>
 
-              <div className="flex flex-wrap gap-x-14 gap-y-8 border-t border-b border-(--color-text)/40 py-10">
+              <div className="flex flex-wrap gap-x-8 sm:gap-x-14 gap-y-6 sm:gap-y-8 border-t border-b border-(--color-text)/40 py-6 sm:py-10">
                 {parsedStats.map((s) => (
                   <div key={s.label}>
-                    <div className="font-display font-bold text-6xl md:text-7xl text-(--color-text) tabular-nums">
+                    <div className="font-display font-bold text-4xl sm:text-5xl md:text-7xl text-(--color-text) tabular-nums">
                       {Math.round(s.number * countProgress)}
                       {s.suffix}
                     </div>
@@ -188,7 +175,7 @@ export default function Hero() {
 
               <Link
                 to="/contact-us"
-                className="btn-accent mt-10 inline-flex w-fit font-semibold px-8 py-4 rounded-lg text-lg"
+                className="btn-accent mt-8 sm:mt-10 inline-flex w-full sm:w-fit justify-center font-semibold px-6 py-3 sm:px-8 sm:py-4 rounded-lg text-base sm:text-lg"
               >
                 Get in touch
               </Link>

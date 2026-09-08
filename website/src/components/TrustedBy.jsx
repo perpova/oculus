@@ -1,20 +1,22 @@
-import { useEffect, useState } from "react";
+const clients = [
+  { name: "Client One", logo: "/logos/logo-1.2.svg", logoWhite: "/logos/logo-1.2-white.svg" },
+  { name: "Client Two", logo: "/logos/logo-2.2.svg", logoWhite: "/logos/logo-2.2-white.svg" },
+  { name: "Client Three", logo: "/logos/logo-3.2.svg", logoWhite: "/logos/logo-3.2-white.svg" },
+  { name: "Client Four", logo: "/logos/logo-4.2.svg", logoWhite: "/logos/logo-4.2-white.svg" },
+  { name: "Client Five", logo: "/logos/logo-5.1.svg", logoWhite: "/logos/logo-5.1-white.svg" },
+  { name: "Client Six", logo: "/logos/logo-6.5.svg", logoWhite: "/logos/logo-6.5-white.svg" },
+  { name: "Client Seven", logo: "/logos/logo-7.svg", logoWhite: "/logos/logo-7-white.svg" },
+  { name: "Client Eight", logo: "/logos/logo-8.2.svg", logoWhite: "/logos/logo-8.2-white.svg" },
+  { name: "Client Nine", logo: "/logos/logo-9.1.svg", logoWhite: "/logos/logo-9.1-white.svg" },
+  { name: "Client Ten", logo: "/logos/logo-010.3.svg", logoWhite: "/logos/logo-010.3-white.svg" },
+  { name: "Client Eleven", logo: "/logos/logo-011.3.1.svg", logoWhite: "/logos/logo-011.3.1-white.svg" },
+  { name: "Client Twelve", logo: "/logos/logo-012.2.1.svg", logoWhite: "/logos/logo-012.2.1-white.svg" },
+  { name: "Client Thirteen", logo: "/logos/logo-13.svg", logoWhite: "/logos/logo-13-white.svg" },
+  { name: "Client Fourteen", logo: "/logos/logo-014.svg", logoWhite: "/logos/logo-014-white.svg" },
+  { name: "Client Fifteen", logo: "/logos/logo-015.svg", logoWhite: "/logos/logo-015-white.svg" },
+];
 
 export default function TrustedBy() {
-  const [clients, setClients] = useState([]);
-
-  useEffect(() => {
-    fetch("http://localhost:5000/api/clients")
-      .then((res) => res.json())
-      .then((data) => setClients(data))
-      .catch((err) => console.error("Failed to load clients:", err));
-  }, []);
-
-  // Don't render the marquee until clients have loaded
-  if (clients.length === 0) {
-    return null;
-  }
-
   return (
     <section className="bg-(--color-bg-nav) py-20">
       <div className="text-center px-[30px]">
@@ -25,12 +27,21 @@ export default function TrustedBy() {
         <div className="overflow-hidden">
           <div className="logo-slider">
             {[...clients, ...clients].map((client, index) => (
-              <div key={`${client.id}-${index}`} className="logo-card">
+              <div key={index} className="logo-card">
+                <div className="group relative">
+                  {/*White version of the logo/ default state*/}
+                <img
+                  src={client.logoWhite}
+                  alt={client.name}
+                  className="h-[60px] w-auto object-contain transition-all duration-300 hover:scale-105 block group-hover:hidden"
+                />
+                {/*Colour version of the logo/ hover state*/}
                 <img
                   src={client.logo}
                   alt={client.name}
-                  className="max-h-[60px] max-w-[80%] object-contain transition-all duration-300 hover:scale-105 grayscale brightness-0 invert hover:grayscale-0 hover:brightness-100 hover:invert-0"
+                  className="h-[60px] w-auto object-contain transition-all duration-300 hover:scale-105 hidden group-hover:block"
                 />
+                </div>
               </div>
             ))}
           </div>

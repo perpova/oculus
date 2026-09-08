@@ -93,33 +93,65 @@ const solutions = [
 ];
 
 // ─── Autoplay stepped carousel ─────────────────────────────────
-// CARDS_VISIBLE cards shown at once. Every STEP_INTERVAL ms the
-// track steps left by exactly one card, then pauses. After the
-// LAST of the 12 real cards has scrolled off (i.e. index reaches
-// solutions.length === 12), it snaps back to index 0 with the
-// transition disabled for one frame so the loop is invisible.
-// This wrap point is dynamic — solutions.length — so it always
-// matches however many items are in the `solutions` array above,
-// not a fixed number.
+// The track steps left by exactly one card every STEP_INTERVAL ms,
+// then pauses. After the LAST of the 12 real cards has scrolled off
+// (i.e. index reaches solutions.length === 12), it snaps back to
+// index 0 with the transition disabled for one frame so the loop is
+// invisible. This wrap point is dynamic — solutions.length — so it
+// always matches however many items are in the `solutions` array
+// above, not a fixed number.
+//
+// CARDS_VISIBLE (how many cards are visible in the viewport at once)
+// is now responsive: 1 on mobile, 2 on desktop — see inside the
+// component below. The `extended` duplicate-buffer always duplicates
+// a fixed 2 cards regardless of screen size, so resizing mid-session
+// (or a stale value) never leaves the wrap-around short on content.
 
-const CARDS_VISIBLE = 2; // cards moving in the carousel (right side)
-const CARD_WIDTH = 300;
-const CARD_HEIGHT = 377;
-const STATIC_WIDTH = 400;
-
-const GAP_PX = 30;
+const GAP_PX = 20;
 const STEP_INTERVAL = 3000; // ms the row pauses between steps
 const TRANSITION_MS = 1600; // ms the slide animation takes
 
+// ─── Responsive sizing ─────────────────────────────────────────
+// Desktop keeps the original fixed pixel sizing. Below the breakpoint we
+// switch to smaller card/image dimensions so nothing overflows the
+// viewport on a phone. These feed both the JSX `style` widths/heights AND
+// the carousel's own slide-distance math (stepPx), so the two always stay
+// in sync regardless of screen size.
+const DESKTOP = { CARD_WIDTH: 300, CARD_HEIGHT: 377, STATIC_WIDTH: 400 };
+const MOBILE = { CARD_WIDTH: 240, CARD_HEIGHT: 320, STATIC_WIDTH: 260 };
+
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth < breakpoint : false
+  );
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < breakpoint);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [breakpoint]);
+
+  return isMobile;
+}
+
 export default function SolutionsCarousel() {
+  const isMobile = useIsMobile();
+  const { CARD_WIDTH, CARD_HEIGHT, STATIC_WIDTH } = isMobile ? MOBILE : DESKTOP;
+
+  // How many cards are visible in the viewport at once: 1 on mobile,
+  // 2 on desktop. This drives the viewport's max-width below so the
+  // browser can never show a sliver of the next card.
+  const CARDS_VISIBLE = isMobile ? 1 : 2;
+
   const [index, setIndex] = useState(0);
   const [withTransition, setWithTransition] = useState(true);
   const trackRef = useRef(null);
   const intervalRef = useRef(null);
 
-  // duplicate the first CARDS_VISIBLE cards at the end so there's
-  // real content to slide into during the wrap-around step
-  const extended = [...solutions, ...solutions.slice(0, CARDS_VISIBLE)];
+  // duplicate the first 2 cards at the end so there's real content to
+  // slide into during the wrap-around step, regardless of whether
+  // CARDS_VISIBLE is currently 1 or 2.
+  const extended = [...solutions, ...solutions.slice(0, 2)];
 
   // ── Autoplay + resilience against bfcache restores / hidden tabs ──
   // Bug this fixes: navigating away and back via browser back/forward
@@ -191,31 +223,41 @@ export default function SolutionsCarousel() {
   // fixed step: card width + gap, in real pixels — no drift, no measuring
   const stepPx = CARD_WIDTH + GAP_PX;
 
+  // exact pixel width of the viewport so exactly CARDS_VISIBLE cards
+  // (plus the gaps between them) show — no partial card can peek in
+  const viewportWidth = CARDS_VISIBLE * CARD_WIDTH + (CARDS_VISIBLE - 1) * GAP_PX;
+
   return (
-    <section id="solutions" className="relative bg-(--color-bg) py-20">
+    <section id="solutions" className="relative bg-(--color-bg) py-14 md:py-20 overflow-x-hidden">
       {/* Heading only up top, like "Related Reads" in the reference —
           the description now lives lower, next to the static image */}
-      <div className="px-16 md:px-20">
-        <span className="text-gold font-semibold text-[18px] tracking-wide uppercase">
+      <div className="px-5 sm:px-10 md:px-16 lg:px-20">
+        <span className="text-gold font-semibold text-sm md:text-[18px] tracking-wide uppercase">
           What We Offer
         </span>
-        <h2 className="font-display font-normal text-3xl md:text-[56px] leading-tight text-(--color-heading-sub-1) mt-2">
+        <h2 className="font-display font-normal text-2xl sm:text-3xl md:text-[56px] leading-tight text-(--color-heading-sub-1) mt-2">
           Security Solutions
         </h2>
       </div>
 
       <div
-        className="flex flex-col md:flex-row mt-12 px-16 md:px-20"
-        style={{ columnGap: `${GAP_PX}px`, rowGap: "40px" }}
+        className="flex flex-col md:flex-row mt-8 md:mt-12 px-5 sm:px-10 md:px-16 lg:px-20"
+        style={{ columnGap: `${GAP_PX}px`, rowGap: "32px" }}
       >
-        {/* ── Left half (~50%): static image + description + button ── */}
+        {/* ── Left half (~50%): static image + description + button ──
+            Stacks vertically on phones (flex-col), sits side-by-side
+            from the sm breakpoint up (sm:flex-row), and shares the row
+            with the carousel from md up. */}
         <div
-          className="flex shrink-0 md:w-1/2"
-          style={{ columnGap: `${GAP_PX}px` }}
+          className="flex flex-col sm:flex-row md:w-1/2"
+          style={{ columnGap: `${GAP_PX}px`, rowGap: "16px" }}
         >
           <div
-            className="shrink-0 rounded-2xl overflow-hidden bg-gray-100 flex items-center justify-center"
-            style={{ width: `${STATIC_WIDTH}px`, height: `${CARD_HEIGHT}px` }}
+            className="w-full sm:shrink-0 rounded-2xl overflow-hidden bg-gray-100 flex items-center justify-center mx-auto"
+            style={{
+              maxWidth: `${STATIC_WIDTH}px`,
+              height: isMobile ? "220px" : `${CARD_HEIGHT}px`,
+            }}
           >
             <img
               src={eliteImg}
@@ -238,8 +280,8 @@ export default function SolutionsCarousel() {
               Swap the href for a react-router <Link to="/..."> instead if
               ProductElite actually lives on its own route.
             */}
-            <a
-              href="#elite-showcase"
+            
+            <a  href="#elite-showcase"
               className="group inline-flex items-center gap-1.5 text-sm font-semibold text-(--color-accent) w-fit transition-colors duration-200 hover:text-(--color-text-2)"
             >
               <span className="underline underline-offset-4">Discover More</span>
@@ -248,8 +290,16 @@ export default function SolutionsCarousel() {
           </div>
         </div>
 
-        {/* ── Right half (~50%): carousel viewport — only this part scrolls ── */}
-        <div className="flex-1 min-w-0 md:w-1/2 overflow-hidden">
+        {/* ── Right half: carousel viewport — only this part scrolls ──
+            maxWidth is pinned to exactly CARDS_VISIBLE cards' worth of
+            pixels (1 on mobile, 2 on desktop) plus the gaps between
+            them, so the flex layout can never stretch the viewport
+            wide enough to reveal a sliver of the next card. md:w-1/2
+            stays as an outer ceiling on desktop row layout. */}
+        <div
+          className="min-w-0 md:w-1/2 overflow-hidden"
+          style={{ maxWidth: `${viewportWidth}px` }}
+        >
           <div
             ref={trackRef}
             onTransitionEnd={handleTransitionEnd}
@@ -282,12 +332,12 @@ export default function SolutionsCarousel() {
                   />
                 </div>
 
-                <div className="flex flex-col flex-1 p-5 min-h-0" style={{ rowGap: "12px" }}>
-                  <p className="font-display text-lg leading-snug text-(--color-teal-dark) line-clamp-2">
+                <div className="flex flex-col flex-1 p-4 md:p-5 min-h-0" style={{ rowGap: "10px" }}>
+                  <p className="font-display text-base md:text-lg leading-snug text-(--color-teal-dark) line-clamp-2">
                     {s.label}
                   </p>
-                  <p className="text-sm text-olive flex-1 line-clamp-2">{s.desc}</p>
-                  <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-(--color-teal-dark) mt-auto transition-colors duration-200 group-hover:text-(--color-green-light)">
+                  <p className="text-xs md:text-sm text-olive flex-1 line-clamp-2">{s.desc}</p>
+                  <span className="inline-flex items-center gap-1.5 text-xs md:text-sm font-semibold text-(--color-teal-dark) mt-auto transition-colors duration-200 group-hover:text-(--color-green-light)">
                     <span className="underline underline-offset-4 ">Discover More</span>
                     <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-1" />
                   </span>

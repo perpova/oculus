@@ -39,8 +39,8 @@ export default function Industries() {
         <h2 className="font-display font-normal text-3xl md:text-[56px] text-white mt-2">Industries We Serve</h2>
 
         <div
-          className="grid md:grid-cols-4 mt-12"
-          style={{ columnGap: "24px" }}
+          className="grid grid-cols-1 md:grid-cols-4 mt-12"
+          style={{ columnGap: "24px", rowGap: "24px" }}
         >
           {industries.map((ind) => (
             <div

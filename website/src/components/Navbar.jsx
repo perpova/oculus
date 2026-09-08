@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { createPortal } from "react-dom";
 import {
   Menu,
   X,
   ChevronDown,
   ArrowRight,
+  ArrowLeft,
   Home,
   Building,
   Phone,
@@ -187,10 +189,47 @@ function DropdownItem({ item, parentHref, basePath, onClick, className, pathname
   );
 }
 
+// ── Mobile menu row (flat, Allied-Universal style) ─────────────────────────
+// Plain label + trailing arrow if it drills into a submenu. No icon/desc —
+// that richer treatment stays on desktop only.
+function MobileRow({ children, onClick, to, href, hasArrow }) {
+  const rowClass =
+    "flex items-center justify-between w-full px-6 py-4 border-b border-(--color-border) " +
+    "text-(--color-text) font-semibold text-sm uppercase tracking-wide text-left";
+
+  const content = (
+    <>
+      {children}
+      {hasArrow && <ArrowRight className="w-4 h-4 text-(--color-accent) shrink-0" />}
+    </>
+  );
+
+  if (to) {
+    return (
+      <Link to={to} onClick={onClick} className={rowClass}>
+        {content}
+      </Link>
+    );
+  }
+  if (href) {
+    return (
+      <a href={href} onClick={onClick} className={rowClass}>
+        {content}
+      </a>
+    );
+  }
+  return (
+    <button type="button" onClick={onClick} className={rowClass}>
+      {content}
+    </button>
+  );
+}
+
 export default function Navbar() {
   const { openQuoteModal } = useQuoteModal();
   const { pathname } = useLocation(); // current URL path, e.g. "/solutions/nurse-calling"
   const [open, setOpen] = useState(false);
+  const [activeSubmenu, setActiveSubmenu] = useState(null); // the navLinks entry currently drilled into, mobile only
   const [scrolled, setScrolled] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0); // 0 = full height, 1 = shrunk
 
@@ -206,9 +245,20 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Reset the drill-down state whenever the menu itself closes, so it
+  // doesn't reopen showing a stale submenu next time.
+  useEffect(() => {
+    if (!open) setActiveSubmenu(null);
+  }, [open]);
+
   // Interpolated values driving the smooth shrink
   const navHeight = NAV_HEIGHT_EXPANDED - (NAV_HEIGHT_EXPANDED - NAV_HEIGHT_COMPACT) * scrollProgress;
   const logoHeight = LOGO_HEIGHT_EXPANDED - (LOGO_HEIGHT_EXPANDED - LOGO_HEIGHT_COMPACT) * scrollProgress;
+
+  const closeMenu = () => {
+    setOpen(false);
+    setActiveSubmenu(null);
+  };
 
   return (
     <header
@@ -220,18 +270,18 @@ export default function Navbar() {
     >
       <nav
         style={{ height: `${navHeight}px` }}
-        className="w-full flex items-center justify-between px-8 md:px-12 transition-[height] duration-150 ease-out"
+        className="w-full flex items-center justify-between px-4 sm:px-6 md:px-12 transition-[height] duration-150 ease-out"
       >
         <Link to="/" className="flex items-center gap-3">
           <img
             src={scrollProgress > 0.5 ? logoCompact : logo}
             alt="Oculus International"
             style={{ height: `${logoHeight}px` }}
-            className="w-auto transition-[height] duration-150 ease-out"
+            className="w-auto max-h-9 sm:max-h-10 md:max-h-none transition-[height] duration-150 ease-out"
           />
         </Link>
 
-        <ul className="hidden md:flex items-center gap-8 text-base font-medium text-(--color-text)/90">
+        <ul className="hidden md:flex items-center gap-8 text-base font-medium text-(--color-text-nav)/90">
           {navLinks.map((link) => {
             const isWide = link.dropdown && link.dropdown.length > 6;
 
@@ -303,65 +353,89 @@ export default function Navbar() {
         </div>
 
         <div className="md:hidden flex items-center gap-3">
-          <ThemeToggle />
+          <div className="scale-[0.7] origin-center -mx-1.5">
+            <ThemeToggle />
+          </div>
           <button className="text-(--color-text)" onClick={() => setOpen(!open)} aria-label="Toggle menu">
             {open ? <X /> : <Menu />}
           </button>
         </div>
       </nav>
 
-      {open && (
-        <div className="md:hidden bg-(--color-bg) border-t border-(--color-text)/10 px-6 py-4 space-y-3">
-          {navLinks.map((link) => {
-            const cleanPath = pathname.replace(/\/+$/, "") || "/";
-            const isTopActive = link.to
-              ? cleanPath === link.to
-              : link.activePrefix
-              ? pathname.startsWith(link.activePrefix)
-              : false;
+      {/* ── MOBILE FULL-SCREEN MENU ──────────────────────────────────────
+          Flat list, label + arrow, tap drills into that section's items.
+          A pinned "Request a Free Quote" bar always sits at the bottom,
+          independent of how long the list is. */}
+            {/* ── MOBILE FULL-SCREEN MENU ── */}
+      {open &&
+        createPortal(
+          <div
+            className="md:hidden fixed left-0 right-0 bottom-0 z-[60] bg-(--color-bg) flex flex-col"
+            style={{ top: `${navHeight}px` }}
+          >
+            <div className="flex-1 min-h-0 overflow-y-auto">
+              {activeSubmenu ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setActiveSubmenu(null)}
+                    className="flex items-center gap-2 w-full px-6 py-4 border-b border-(--color-border) text-(--color-text)/60 text-sm font-semibold uppercase tracking-wide"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    Back
+                  </button>
 
-            return (
-              <div key={link.label}>
-                {link.to ? (
-                  <Link
-                    to={link.to}
-                    className={`block text-sm font-medium ${isTopActive ? "text-(--color-accent)" : "text-(--color-text)"}`}
-                    onClick={() => setOpen(false)}
-                  >
-                    {link.label}
-                  </Link>
-                ) : (
-                  
-                  <a  href={link.href}
-                    className={`block text-sm font-medium ${isTopActive ? "text-(--color-accent)" : "text-(--color-text)"}`}
-                    onClick={() => setOpen(false)}
-                  >
-                    {link.label}
-                  </a>
-                )}
-                {link.dropdown && (
-                  <div className="pl-4 mt-2 space-y-2">
-                    {link.dropdown.map((item) => (
-                      <DropdownItem
+                  {activeSubmenu.dropdown.map((item) => {
+                    const to =
+                      item.to ||
+                      (item.slug && activeSubmenu.basePath
+                        ? `${activeSubmenu.basePath}/${item.slug}`
+                        : null);
+                    return (
+                      <MobileRow
                         key={item.label}
-                        item={item}
-                        parentHref={link.href}
-                        basePath={link.basePath}
-                        pathname={pathname}
-                        onClick={() => setOpen(false)}
-                        className="flex items-center gap-2 text-sm text-(--color-text)/70"
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-          <a href="#contact" className="btn-accent inline-block text-sm font-semibold px-5 py-2.5 rounded-lg">
-            Contact Us
-          </a>
-        </div>
-      )}
+                        to={to}
+                        href={!to ? activeSubmenu.href : undefined}
+                        onClick={closeMenu}
+                      >
+                        {item.label}
+                      </MobileRow>
+                    );
+                  })}
+                </>
+              ) : (
+                navLinks.map((link) => {
+                  const hasDropdown = Boolean(link.dropdown);
+                  if (!hasDropdown) {
+                    return (
+                      <MobileRow key={link.label} to={link.to} href={link.href} onClick={closeMenu}>
+                        {link.label}
+                      </MobileRow>
+                    );
+                  }
+                  return (
+                    <MobileRow key={link.label} hasArrow onClick={() => setActiveSubmenu(link)}>
+                      {link.label}
+                    </MobileRow>
+                  );
+                })
+              )}
+            </div>
+
+            <div className="p-4 border-t border-(--color-border)">
+              <button
+                onClick={() => {
+                  closeMenu();
+                  openQuoteModal();
+                }}
+                className="btn-accent w-full py-3.5 rounded-lg font-semibold text-sm uppercase tracking-wide"
+              >
+                Request a Free Quote
+              </button>
+            </div>
+          </div>,
+          document.body
+        )}
     </header>
   );
 }
