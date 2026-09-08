@@ -1,9 +1,9 @@
 import { Camera, Volume2, Flame, Network, Building2, ShieldCheck, ArrowRight } from "lucide-react";
 
-import company1 from "../assets/company-1.jpg";
-import company2 from "../assets/company-2.jpg";
-import company3 from "../assets/company-3.jpg";
-import company4 from "../assets/company-4.jpg";
+// import company1 from "../assets/company-1.jpg";
+// import company2 from "../assets/company-2.jpg";
+// import company3 from "../assets/company-3.jpg";
+// import company4 from "../assets/company-4.jpg";
 
 import TakeFirstStep from "../components/TakeFirstStep";
 /**
@@ -129,6 +129,7 @@ export default function AboutUsPage() {
           </p>
         </div>
         
+        {/*
         <div className="grid grid-cols-3 grid-rows-2 gap-4 h-[500px] mb-8">
             <img
               src={company1}
@@ -151,6 +152,7 @@ export default function AboutUsPage() {
               className="col-span-2 row-span-1 w-full h-full object-cover object-top rounded-2xl"
             />
           </div>
+        */}
 
         <div className="mt-20">
           <Eyebrow light>Global Standards</Eyebrow>
