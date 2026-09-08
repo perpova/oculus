@@ -231,7 +231,7 @@ export default function AboutUsPage() {
           Oculus is legally authorized to distribute, install, and maintain
           reputed systems from South Korea and Australia, including{" "}
           <span style={{ color: "var(--color-accent)", fontWeight: 600 }}>NESS</span>,{" "}
-          <span style={{ color: "var(--color-accent)", fontWeight: 600 }}>IDTECK</span>,{" "}
+          
           <span style={{ color: "var(--color-accent)", fontWeight: 600 }}>WEBGATE</span>,{" "}
           <span style={{ color: "var(--color-accent)", fontWeight: 600 }}>IMPEGVISION</span>,
           and other trusted ELV manufacturers.

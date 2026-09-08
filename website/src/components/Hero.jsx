@@ -4,28 +4,8 @@ import heroDark from "../assets/hero-dark-4.png";
 import { useTheme } from "../ThemeContext";
 import HeroHotspots from "./HeroHotspots";
 
-const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
-
-// TEMP — flip to true once backend server.js is confirmed working with real DB
-const USE_REAL_API = false;
-const API_URL = "http://localhost:5000/api/hero";
-
-// TEMP mock — matches the exact columns in home_hero. Delete once API is live.
-const mockHeroData = {
-  id: 1,
-  heading_1: "Futuristic",
-  heading_2: "ELV Systems",
-  heading_3: "Engineered for Excellence",
-  text_1: "Extra Low Voltage Integration",
-  text_2:
-    "From intelligent alarm systems to high-performance CCTV networks — Sri Lanka's trusted ELV & electronic security specialist, protecting homes, businesses, and institutions island-wide.",
-  stat_1_value: "10+",
-  stat_1_label: "Years Experience",
-  stat_2_value: "365",
-  stat_2_label: "24/7 Monitoring",
-  stat_3_value: "15+",
-  stat_3_label: "Global Brands",
-};
+import { useQuoteModal } from "../context/QuoteModalContext";
+import { Link } from "react-router-dom";
 
 function parseStat(value) {
   const match = value.match(/^(\d+)(.*)$/);
@@ -34,26 +14,21 @@ function parseStat(value) {
     : { number: 0, suffix: value };
 }
 
+const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+
 export default function Hero() {
+  const { openQuoteModal } = useQuoteModal();
   const sectionRef = useRef(null);
   const [progress, setProgress] = useState(0);
-  const [content, setContent] = useState(null); // holds all fields from home_hero
+  const [content, setContent] = useState(null);
   const { theme } = useTheme();
 
-  // Fetch hero content (mock now, real API later — see USE_REAL_API above)
+  // Fetch hero content from the backend API
   useEffect(() => {
-    if (USE_REAL_API) {
-      fetch(API_URL)
-        .then((res) => res.json())
-        .then((data) => setContent(data))
-        .catch((err) => {
-          console.error("Failed to load hero content:", err);
-          setContent(mockHeroData);
-        });
-    } else {
-      const timer = setTimeout(() => setContent(mockHeroData), 300);
-      return () => clearTimeout(timer);
-    }
+    fetch("http://localhost:5000/api/hero")
+      .then((res) => res.json())
+      .then((data) => setContent(data))
+      .catch((err) => console.error("Failed to load hero content:", err));
   }, []);
 
   // Swap background image whenever theme changes
@@ -97,9 +72,11 @@ export default function Hero() {
 
   const countProgress = easeOutCubic(Math.min(statsProgress / 0.7, 1));
 
-  const hotspotRotation = progress * 15;
+  // Small rotation applied to the hotspot cluster as the user scrolls
+  // through the pinned hero, settling before the next section takes over.
+  const hotspotRotation = progress * 15; // degrees — tweak max value to taste
 
-  // Don't render until content has loaded (mock or real)
+  // Don't render real content until the fetch resolves
   if (!content) {
     return (
       <section id="home" className="relative h-screen flex items-center justify-center">
@@ -108,7 +85,7 @@ export default function Hero() {
     );
   }
 
-  // Build the stats array FROM the fetched content, instead of a hardcoded const
+  // Build stats array from fetched content instead of a hardcoded const
   const parsedStats = [
     { value: content.stat_1_value, label: content.stat_1_label },
     { value: content.stat_2_value, label: content.stat_2_label },
@@ -123,15 +100,18 @@ export default function Hero() {
       style={{ height: "220vh" }}
     >
       <div className="sticky top-0 h-screen overflow-hidden flex items-center">
+        {/* Background image — theme-aware via CSS variable set in useEffect above */}
         <div
           className="absolute inset-0 bg-cover bg-center transition-all duration-500"
           style={{ backgroundImage: "var(--hero-bg-image)" }}
         />
+        {/* Overlay for text readability */}
         <div
           className="absolute inset-0"
           style={{ background: "rgba(0, 0, 0, 0)" }}
         />
 
+        {/* Icon hotspots + connecting lines, anchored to the horn-speaker in the image */}
         <HeroHotspots rotation={hotspotRotation} />
 
         <div className="relative max-w-7xl mx-auto px-6 grid md:grid-cols-[3fr_2fr] gap-12 items-center w-full">
@@ -162,11 +142,14 @@ export default function Hero() {
               </p>
 
               <div className="mt-8 flex flex-wrap gap-4">
-                <a href="#contact" className="btn-accent font-semibold px-6 py-3 rounded-lg">
+                <button
+                  onClick={openQuoteModal}
+                  className="btn-accent font-semibold px-6 py-3 rounded-lg"
+                >
                   Request a Free Quote
-                </a>
-                <a
-                  href="#solutions"
+                </button>
+
+                <a href="#solutions"
                   className="border border-(--color-text)/30 text-(--color-text) font-semibold px-6 py-3 rounded-lg hover:bg-(--color-text)/10 transition-colors"
                 >
                   Explore Solutions
@@ -203,9 +186,12 @@ export default function Hero() {
                 ))}
               </div>
 
-              <a href="#contact" className="btn-accent mt-10 inline-flex w-fit font-semibold px-8 py-4 rounded-lg text-lg">
+              <Link
+                to="/contact-us"
+                className="btn-accent mt-10 inline-flex w-fit font-semibold px-8 py-4 rounded-lg text-lg"
+              >
                 Get in touch
-              </a>
+              </Link>
             </div>
           </div>
         </div>

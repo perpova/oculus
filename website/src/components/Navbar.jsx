@@ -38,6 +38,9 @@ import logo from "../assets/oculus-logo-2.png";
 // TODO: replace with your actual compact/secondary logo asset path
 import logoCompact from "../assets/company-logo-2.png";
 import ThemeToggle from "./ThemeToggle";
+import { useQuoteModal } from "../context/QuoteModalContext";
+
+
 
 const navLinks = [
   { label: "Home", to: "/" },
@@ -106,7 +109,7 @@ const navLinks = [
   dropdown: [
     { label: "About Us", desc: "Who we are and what drives us", icon: Info, to: "/about-us" },
     { label: "Careers", desc: "Join our team", icon: Briefcase },
-    { label: "Contact Us", desc: "Get in touch with our team", icon: Mail },
+    { label: "Contact Us", desc: "Get in touch with our team", icon: Mail, to: "/contact-us" },
     ],
   },
 ];
@@ -185,6 +188,7 @@ function DropdownItem({ item, parentHref, basePath, onClick, className, pathname
 }
 
 export default function Navbar() {
+  const { openQuoteModal } = useQuoteModal();
   const { pathname } = useLocation(); // current URL path, e.g. "/solutions/nurse-calling"
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -290,10 +294,12 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-4">
           <ThemeToggle />
 
-          <a href="#contact"
-          className="btn-accent text-sm font-semibold px-5 py-2.5 rounded-lg"          >
+          <button
+            onClick={openQuoteModal}
+            className="btn-accent text-sm font-semibold px-5 py-2.5 rounded-lg"
+          >
             Request a Free Quote
-          </a>
+          </button>
         </div>
 
         <div className="md:hidden flex items-center gap-3">

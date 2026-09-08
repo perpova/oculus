@@ -36,5 +36,18 @@ app.get("/api/hero", async (req, res) => {
   }
 });
 
+// GET all active clients, in display order — used by the TrustedBy marquee
+app.get("/api/clients", async (req, res) => {
+  try {
+    const [rows] = await pool.query(
+      "SELECT id, name, logo FROM home_clients WHERE is_active = 1 ORDER BY sort_order ASC"
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch clients" });
+  }
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

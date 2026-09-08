@@ -1,6 +1,9 @@
 import { Phone, FileText, ArrowRight } from "lucide-react";
+import { useQuoteModal } from "../context/QuoteModalContext";
+import { Link } from "react-router-dom";
 
 export default function TakeFirstStep({
+  
   eyebrow = "Take the First Step",
   eyebrowColor= "var(--color-gold)",
   heading = (
@@ -15,6 +18,8 @@ export default function TakeFirstStep({
   bgColor = "var(--color-bg-sub-2)",
   
 }) {
+  const { openQuoteModal } = useQuoteModal();
+
   return (
     <section
       className="relative w-full overflow-hidden px-16 md:px-20 py-20"
@@ -64,12 +69,12 @@ export default function TakeFirstStep({
           </a>
 
           
-          <a  href="#contact"
+          <button  onClick={openQuoteModal}
             className="inline-flex items-center gap-2 rounded-lg border border-(--color-border-strong) text-(--color-text) font-semibold text-sm px-6 py-3.5 transition-colors duration-200 hover:bg-(--color-accent-soft)"
           >
             <FileText className="w-4 h-4" />
             Request a Free Quote
-          </a>
+          </button>
         </div>
 
         <p className="font-body italic text-(--color-text-muted) text-sm mt-6">

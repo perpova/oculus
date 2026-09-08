@@ -7,6 +7,7 @@ import ProductCategoryPage from "./pages/ProductCategoryPage";
 import EliteControlPage from "./pages/EliteControlPage"; // TODO: create this file if it doesn't exist yet
 import IndustryPage from "./pages/IndustryPage";
 import AboutUsPage from "./pages/AboutUsPage";
+import ContactUs from "./pages/ContactUs";
 import { ThemeProvider } from "./ThemeContext"; // keep your existing theme provider
 import "./index.css";
 
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
       { path: "/products/:categorySlug", element: <ProductCategoryPage /> },
       { path: "/industries/:slug", element: <IndustryPage /> }, 
       { path: "/about-us", element: <AboutUsPage /> },
+      { path: "/contact-us", element: <ContactUs /> },
     ],
   },
 ]);

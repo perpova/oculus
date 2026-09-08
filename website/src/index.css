@@ -38,7 +38,9 @@
   --color-bg-sub-3: var(--color-grey);
   --color-bg-sub-4: var(--color-teal);
   --color-bg-sub-5: var(--color-teal);
+  --color-bg-sub-6: var(--color-teal-dark);
   --color-border-2: var(--color-white);
+  --color-bg-sub-7: var(--color-white);
 
   /* Text */
   --color-text: var(--color-teal-dark);
@@ -110,7 +112,9 @@
   --color-bg-sub-3: var(--color-teal-dark);
   --color-bg-sub-4: var(--color-olive);
   --color-bg-sub-5: var(--color-teal-deep);
+  --color-bg-sub-6: var(--color-olive);
   --color-border-2: var(--color-gold);
+  --color-bg-sub-7: var(--color-olive);
 
 
   /* Text */
@@ -399,4 +403,18 @@ a:hover {
     to {
         transform: translateX(-50%);
     }
+}
+
+/* Autofilled fields become white with black text */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus {
+  -webkit-text-fill-color: #000;
+  -webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
+  box-shadow: 0 0 0px 1000px #ffffff inset;
+  transition: background-color 9999s ease-in-out 0s;
+  caret-color: #000;
 }

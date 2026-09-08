@@ -1,7 +1,7 @@
 import { ShieldCheck, Zap, Headset, Settings2 } from "lucide-react";
 
 const stats = [
-  { id: "0001", value: "15+", label: "Years of Experience", size: "lg" },
+  { id: "0001", value: "10+", label: "Years of Experience", size: "lg" },
   { id: "0002", value: "1,200+", label: "Sites Protected", size: "sm" },
   { id: "0003", value: "24/7", label: "Monitoring & Support", size: "sm" },
   { id: "0004", value: "98%", label: "Client Retention", size: "sm" },

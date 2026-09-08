@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import chatgptLogo from "../assets/Openai.png";
 import claudeLogo from "../assets/Claude.png";
 import geminiLogo from "../assets/Gemini.png";
@@ -47,34 +48,30 @@ const aiButtonBaseStyle = {
   transition: "all 0.2s ease",
 };
 
+// internal links use "to"; still-unbuilt pages use "comingSoon" instead of a dead link
 const quickLinks = [
-  { label: "About Us", href: "#about" },
-  { label: "Solutions", href: "#solutions" },
-  { label: "Industries", href: "#industries" },
-  { label: "Resources", href: "#resources" },
-  { label: "Careers", href: "#careers", hiring: true },
+  { label: "About Us", to: "/about-us" },
+  { label: "Solutions", to: "/#solutions" },
+  { label: "Industries", to: "/#industries" },
+  { label: "Careers", comingSoon: true, hiring: true },
+  { label: "Contact Us", to: "/contact-us" },
 ];
 
-const solutionsLinks = [
-  { label: "CCTV Surveillance", href: "#solutions" },
-  { label: "Intruder Alarm Systems", href: "#solutions" },
-  { label: "Access Control Systems", href: "#solutions" },
-  { label: "Fire Detection", href: "#solutions" },
-  { label: "Central Alarm Monitoring", href: "#solutions" },
-];
-
-const industriesLinks = [
-  { label: "Residential", href: "#industries" },
-  { label: "Government", href: "#industries" },
-  { label: "Industrial", href: "#industries" },
-  { label: "Education", href: "#industries" },
+// slugs match Navbar.jsx's Products dropdown exactly (basePath: "/products")
+const productLinks = [
+  { label: "EliteControl (NZ)", to: "/products/elitecontrol" },
+  { label: "Alarm Systems", to: "/products/alarm-systems" },
+  { label: "CCTV", to: "/products/cctv" },
+  { label: "Access Control", to: "/products/access-control" },
+  { label: "Attendance Systems", to: "/products/attendance-systems" },
+  { label: "Others", to: "/products/others" },
 ];
 
 const resourcesLinks = [
-  { label: "Blogs", href: "#resources" },
-  { label: "Articles", href: "#resources" },
-  { label: "News", href: "#resources" },
-  { label: "Success Stories", href: "#resources" },
+  { label: "Blogs", to: "/blog" },
+  { label: "Articles", href: "/resources" },
+  { label: "News", to: "/news" },
+  { label: "Success Stories", comingSoon: true },
 ];
 
 const contactDetails = [
@@ -82,6 +79,24 @@ const contactDetails = [
   { label: "+94 112 697 397", href: "tel:+94112697397" },
   { label: "info@ioculus.lk", href: "mailto:info@ioculus.lk" },
 ];
+
+function FooterLink({ item }) {
+  if (item.comingSoon) {
+    return (
+      <span className="font-body text-sm text-white/40 cursor-not-allowed">
+        {item.label}
+      </span>
+    );
+  }
+  return (
+    <Link
+      to={item.to}
+      className="q-link font-body text-sm text-white/85 hover:text-white transition-colors"
+    >
+      {item.label}
+    </Link>
+  );
+}
 
 export default function NewsletterSection() {
   return (
@@ -137,9 +152,9 @@ export default function NewsletterSection() {
       {/* Divider */}
       <div className="h-px w-full bg-white/30 mt-12 mb-10" />
 
-      {/* Quick Links + Solutions + Industries + Resources + Contact */}
+      {/* Quick Links + Products + Resources + Contact */}
       <div
-        className="grid grid-cols-2 md:grid-cols-5"
+        className="grid grid-cols-2 md:grid-cols-4"
         style={{ columnGap: "40px", rowGap: "32px" }}
       >
         <div className="flex flex-col" style={{ rowGap: "18px" }}>
@@ -147,12 +162,7 @@ export default function NewsletterSection() {
           <div className="flex flex-col" style={{ rowGap: "12px" }}>
             {quickLinks.map((link) => (
               <div key={link.label} className="flex items-center" style={{ gap: "8px" }}>
-                
-                <a  href={link.href}
-                  className="q-link font-body text-sm text-white/85 hover:text-white transition-colors"
-                >
-                  {link.label}
-                </a>
+                <FooterLink item={link} />
                 {link.hiring && (
                   <span
                     className="font-body text-white font-semibold whitespace-nowrap"
@@ -173,31 +183,10 @@ export default function NewsletterSection() {
         </div>
 
         <div className="flex flex-col" style={{ rowGap: "18px" }}>
-          <h3 className="font-display font-bold text-xl text-gold">Solutions</h3>
+          <h3 className="font-display font-bold text-xl text-gold">Products</h3>
           <div className="flex flex-col" style={{ rowGap: "12px" }}>
-            {solutionsLinks.map((link) => (
-              
-              <a  key={link.label}
-                href={link.href}
-                className="q-link font-body text-sm text-white/85 hover:text-white transition-colors"
-              >
-                {link.label}
-              </a>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex flex-col" style={{ rowGap: "18px" }}>
-          <h3 className="font-display font-bold text-xl text-gold">Industries</h3>
-          <div className="flex flex-col" style={{ rowGap: "12px" }}>
-            {industriesLinks.map((link) => (
-              
-              <a  key={link.label}
-                href={link.href}
-                className="q-link font-body text-sm text-white/85 hover:text-white transition-colors"
-              >
-                {link.label}
-              </a>
+            {productLinks.map((link) => (
+              <FooterLink key={link.label} item={link} />
             ))}
           </div>
         </div>
@@ -206,13 +195,7 @@ export default function NewsletterSection() {
           <h3 className="font-display font-bold text-xl text-gold">Resources</h3>
           <div className="flex flex-col" style={{ rowGap: "12px" }}>
             {resourcesLinks.map((link) => (
-              
-              <a  key={link.label}
-                href={link.href}
-                className="q-link font-body text-sm text-white/85 hover:text-white transition-colors"
-              >
-                {link.label}
-              </a>
+              <FooterLink key={link.label} item={link} />
             ))}
           </div>
         </div>
@@ -223,7 +206,7 @@ export default function NewsletterSection() {
             {contactDetails.map((item) =>
               item.href ? (
                 
-                <a  key={item.label}
+              <a  key={item.label}
                   href={item.href}
                   className="q-link font-body text-sm text-white/85 hover:text-white transition-colors"
                 >

@@ -448,7 +448,7 @@ export default function ProductElite() {
   const panelLedsFast = diagnostic || alarm;
 
   return (
-    <section className="relative bg-(--color-bg-sub-3) px-4 sm:px-8 lg:px-12 pt-16 pb-24 sm:pt-20 sm:pb-32">
+    <section id="product-elite" className="relative bg-(--color-bg-sub-3) px-4 sm:px-8 lg:px-12 pt-16 pb-24 sm:pt-20 sm:pb-32">
       <div className="mx-auto max-w-[1350px]">
         <div>
           <span className="inline-flex items-center rounded-full border border-(--color-border)/60 bg-(--color-bg) px-4 py-1.5 font-mono text-xs tracking-wide text-(--color-accent)">
