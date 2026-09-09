@@ -270,7 +270,7 @@ export default function Navbar() {
     >
       <nav
         style={{ height: `${navHeight}px` }}
-        className="w-full flex items-center justify-between px-4 sm:px-6 md:px-12 transition-[height] duration-150 ease-out"
+        className="w-full flex items-center justify-between px-4 sm:px-6 lg:px-6 xl:px-12 transition-[height] duration-150 ease-out"
       >
         <Link to="/" className="flex items-center gap-3">
           <img
@@ -281,7 +281,7 @@ export default function Navbar() {
           />
         </Link>
 
-        <ul className="hidden lg:flex items-center gap-8 text-base font-medium text-(--color-text-nav)/90">
+        <ul className="hidden lg:flex items-center gap-8 xl:gap-8 text-base font-medium text-(--color-text-nav)/90 shrink-0">
           {navLinks.map((link) => {
             const isWide = link.dropdown && link.dropdown.length > 6;
 
@@ -341,12 +341,12 @@ export default function Navbar() {
           })}
         </ul>
 
-        <div className="hidden lg:flex items-center gap-4">
+        <div className="hidden lg:flex items-center gap-4 shrink-0">
           <ThemeToggle />
 
           <button
             onClick={openQuoteModal}
-            className="btn-accent text-sm font-semibold px-5 py-2.5 rounded-lg"
+            className="btn-accent text-sm font-semibold px-5 py-2.5 rounded-lg whitespace-nowrap"
           >
             Request a Free Quote
           </button>

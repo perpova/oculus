@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 
 // Hero background — swap for your real asset.
-import heroImg from "../assets/elite-panel-overview.jpg";
+import heroImg from "../assets/elite-panel-overview.webp";
 
 // Product images — same ../assets/* convention used across the site.
 import hardwareImg from "../assets/elite-hardware-1.png";
@@ -107,21 +107,42 @@ const productCategories = [
   },
 ];
 
-// ─── Carousel track geometry ────────────────────────────────────
-// Fixed pixel sizing keeps the slide math simple and predictable.
-// Bump these together if you want bigger/smaller circles.
-const CIRCLE_SIZE = 240; // px diameter — bump this to resize the whole carousel
-const CIRCLE_GAP = 40; // px between circles
-const STEP_PX = CIRCLE_SIZE + CIRCLE_GAP;
-const VIEWPORT_WIDTH = CIRCLE_SIZE * 3 + CIRCLE_GAP * 2; // shows ~3 circles
-const ARROW_BUTTON_SIZE = 40; // px, matches h-10 w-10 on the arrow buttons
-const ARROW_ROW_GAP = 40; // px, matches sm:gap-10 between viewport and arrows
-// Total row width the carousel actually needs — derived from the above so
-// it never gets smaller than the viewport plus its arrow buttons, no
-// matter how big CIRCLE_SIZE gets. A fixed max-w-4xl was narrower than
-// this at larger circle sizes, which is what clipped the 3rd circle.
-const CAROUSEL_ROW_WIDTH =
-  VIEWPORT_WIDTH + ARROW_BUTTON_SIZE * 2 + ARROW_ROW_GAP * 2;
+// ─── Carousel track geometry — responsive ───────────────────────
+// Circle size, gap, visible-count, and arrow sizing all scale down
+// together at narrower widths. A fixed 240px circle showing 3 at once
+// is 800px+ wide — wider than any phone — so mobile needs a much
+// smaller footprint. useCarouselSizes() below picks the right set
+// based on viewport width and updates on resize.
+//
+// LABEL_HEIGHT is 0 on mobile: the per-circle label is hidden there
+// (see the label <span> below) in favor of a single external label
+// rendered above the whole row, so no height needs to be reserved
+// for it inside the clipped viewport.
+const CAROUSEL_SIZES = {
+  mobile: { CIRCLE_SIZE: 72, CIRCLE_GAP: 6, VISIBLE_COUNT: 3, ARROW_BUTTON_SIZE: 28, ARROW_ROW_GAP: 6, LABEL_HEIGHT: 0 },
+  tablet: { CIRCLE_SIZE: 160, CIRCLE_GAP: 24, VISIBLE_COUNT: 2, ARROW_BUTTON_SIZE: 36, ARROW_ROW_GAP: 20, LABEL_HEIGHT: 44 },
+  desktop: { CIRCLE_SIZE: 240, CIRCLE_GAP: 40, VISIBLE_COUNT: 3, ARROW_BUTTON_SIZE: 40, ARROW_ROW_GAP: 40, LABEL_HEIGHT: 40 },
+};
+
+function useCarouselSizes() {
+  const getSizes = () => {
+    if (typeof window === "undefined") return CAROUSEL_SIZES.desktop;
+    const w = window.innerWidth;
+    if (w < 640) return CAROUSEL_SIZES.mobile;
+    if (w < 1024) return CAROUSEL_SIZES.tablet;
+    return CAROUSEL_SIZES.desktop;
+  };
+
+  const [sizes, setSizes] = useState(getSizes);
+
+  useEffect(() => {
+    const onResize = () => setSizes(getSizes());
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  return sizes;
+}
 
 // ─── Seamless loop setup ────────────────────────────────────────
 // The viewport always shows a 3-circle window (prev, active, next). That
@@ -163,6 +184,17 @@ export default function EliteControlPage() {
   // arrows until the current slide settles keeps trackIndex moving one
   // verified step at a time.
   const [isAnimating, setIsAnimating] = useState(false);
+  const {
+    CIRCLE_SIZE,
+    CIRCLE_GAP,
+    VISIBLE_COUNT,
+    ARROW_BUTTON_SIZE,
+    ARROW_ROW_GAP,
+    LABEL_HEIGHT,
+  } = useCarouselSizes();
+  const STEP_PX = CIRCLE_SIZE + CIRCLE_GAP;
+  const VIEWPORT_WIDTH = CIRCLE_SIZE * VISIBLE_COUNT + CIRCLE_GAP * (VISIBLE_COUNT - 1);
+  const CAROUSEL_ROW_WIDTH = VIEWPORT_WIDTH + ARROW_BUTTON_SIZE * 2 + ARROW_ROW_GAP * 2;
   const sectionRefs = useRef({});
   const carouselRef = useRef(null);
 
@@ -249,8 +281,18 @@ export default function EliteControlPage() {
   return (
     <div className="bg-(--color-bg-primary)">
       {/* ── Hero ── */}
+      {/* min-h-[100svh] (small viewport height) instead of min-h-screen:
+          100vh on mobile browsers includes the space behind the
+          collapsing address bar, which is taller than what's actually
+          visible — that extra height forces bg-cover to zoom in further
+          than it needs to, over-cropping the image. 100svh locks to the
+          real visible viewport instead.
+          bg-[position:60%_center] gives mobile its own focal point
+          (tune the 60% to whatever part of elite-panel-overview.webp
+          you want centered on narrow screens) separate from sm:bg-center
+          on tablet/desktop. */}
       <section
-        className="relative flex min-h-screen flex-col items-center justify-center bg-cover bg-center text-center"
+        className="relative flex min-h-[100svh] flex-col items-center justify-center bg-cover bg-[position:60%_center] sm:bg-center text-center"
         style={{ backgroundImage: `url(${heroImg})` }}
       >
         <div className="absolute inset-0 bg-black/60" />
@@ -283,28 +325,44 @@ export default function EliteControlPage() {
         ref={carouselRef}
         className="relative scroll-mt-0 bg-(--color-bg-primary) pt-24 pb-32"
       >
+        {/* Mobile-only label, rendered once above the row instead of
+            inside each clipped 108px circle. On mobile VISIBLE_COUNT is
+            1, so the sliding viewport is clipped to exactly one circle's
+            width — a label like "EliteCloud Dashboard" has nowhere to
+            overflow into there and was being force-wrapped inside that
+            clipped box, which blew out the viewport's fixed height and
+            squeezed/clipped the circle under it. Driven by activeIndex,
+            which already tracks the centered real product. Hidden at
+            sm: and up, where the per-circle label (below) takes over. */}
+        <p className="mb-3 px-4 text-center text-[11px] font-semibold uppercase tracking-wide text-(--color-accent-teal) sm:hidden">
+          {productCategories[activeIndex].label}
+        </p>
+
         <div
-          className="mx-auto flex items-center justify-center gap-4 px-4 sm:gap-10"
-          style={{ maxWidth: `${CAROUSEL_ROW_WIDTH}px` }}
+          className="mx-auto flex items-center justify-center px-2 sm:px-4"
+          style={{ maxWidth: `${CAROUSEL_ROW_WIDTH}px`, gap: `${ARROW_ROW_GAP}px` }}
         >
           <button
             onClick={goPrev}
             disabled={isAnimating}
             aria-label="Previous product"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-(--color-border) text-(--color-text-secondary) transition-colors hover:border-(--color-accent-teal) hover:text-(--color-accent-teal) disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex shrink-0 items-center justify-center rounded-full border border-(--color-border) text-(--color-text-secondary) transition-colors hover:border-(--color-accent-teal) hover:text-(--color-accent-teal) disabled:cursor-not-allowed disabled:opacity-40"
+            style={{ width: `${ARROW_BUTTON_SIZE}px`, height: `${ARROW_BUTTON_SIZE}px` }}
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
 
-          {/* viewport — clips the track, fixed width matching ~3 circles.
-              Extra height on top of CIRCLE_SIZE gives room for the active
-              circle's scale(1.08) so it doesn't get clipped, plus the
-              label row above each circle. */}
+          {/* viewport — clips the track, fixed width matching the
+              currently visible circle count. Extra height on top of
+              CIRCLE_SIZE gives room for the active circle's scale(1.08)
+              so it doesn't get clipped, plus the label row above each
+              circle (LABEL_HEIGHT is 0 on mobile now that the label
+              lives outside this clipped box). */}
           <div
             className="shrink-0 overflow-hidden"
             style={{
               width: `${VIEWPORT_WIDTH}px`,
-              height: `${CIRCLE_SIZE * 1.15 + 40}px`,
+              height: `${CIRCLE_SIZE * 1.15 + LABEL_HEIGHT}px`,
             }}
           >
             {/* track — slides via transform, extended array (with clones)
@@ -329,14 +387,19 @@ export default function EliteControlPage() {
                     className="flex shrink-0 flex-col items-center gap-4"
                     style={{ width: `${CIRCLE_SIZE}px` }}
                   >
+                    {/* hidden on mobile — replaced by the single external
+                        label above the row; visible again at sm: and up
+                        where multiple circles fit and there's no clipping
+                        risk. Note: no `display` set inline anymore — an
+                        inline style would beat the `hidden` class on
+                        specificity and defeat it. */}
                     <span
-                      className={`text-xs font-semibold uppercase tracking-widest ${
+                      className={`hidden sm:inline-block text-xs font-semibold uppercase tracking-widest ${
                         isActive
                           ? "text-(--color-accent-teal)"
                           : "text-(--color-text-secondary)"
                       }`}
                       style={{
-                        display: "inline-block",
                         transform: isActive ? "scale(1.25)" : "scale(1)",
                         transition: withTransition
                           ? "color 300ms ease, transform 300ms ease"
@@ -389,7 +452,8 @@ export default function EliteControlPage() {
             onClick={goNext}
             disabled={isAnimating}
             aria-label="Next product"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-(--color-border) text-(--color-text-secondary) transition-colors hover:border-(--color-accent-teal) hover:text-(--color-accent-teal) disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex shrink-0 items-center justify-center rounded-full border border-(--color-border) text-(--color-text-secondary) transition-colors hover:border-(--color-accent-teal) hover:text-(--color-accent-teal) disabled:cursor-not-allowed disabled:opacity-40"
+            style={{ width: `${ARROW_BUTTON_SIZE}px`, height: `${ARROW_BUTTON_SIZE}px` }}
           >
             <ChevronRight className="h-5 w-5" />
           </button>
@@ -404,7 +468,7 @@ export default function EliteControlPage() {
               key={slug}
               id={`product-${slug}`}
               ref={(el) => (sectionRefs.current[slug] = el)}
-              className="scroll-mt-28 flex h-80 flex-col overflow-hidden rounded-2xl border border-(--color-teal-dark) bg-white/5 backdrop-blur-md shadow-xl shadow-black/10 sm:flex-row"
+              className="scroll-mt-28 flex flex-col overflow-hidden rounded-2xl border border-(--color-teal-dark) bg-white/5 backdrop-blur-md shadow-xl shadow-black/10 sm:h-80 sm:flex-row"
               style={{
                 backgroundImage:
                   "linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02))",

@@ -31,11 +31,11 @@ const socialIcons = {
 };
 
 const socialLinks = [
-  { icon: socialIcons.linkedin, href: "#" },
+  { icon: socialIcons.linkedin, href: "https://www.linkedin.com/company/oculus-international-ltd/home/" },
   { icon: socialIcons.twitter, href: "#" },
   { icon: socialIcons.instagram, href: "#" },
-  { icon: socialIcons.youtube, href: "#" },
-  { icon: socialIcons.facebook, href: "#" },
+  { icon: socialIcons.youtube, href: "http://www.youtube.com/@OculusInternational" },
+  { icon: socialIcons.facebook, href: "https://www.facebook.com/share/14ofF68RX2a/" },
 ];
 
 /*const noticeAtCollectionIcon = (
@@ -97,6 +97,8 @@ export default function Footer() {
               <a
                 key={i}
                 href={href}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="q-link w-9 h-9 sm:w-10 sm:h-10 rounded-lg border border-white/15 flex items-center justify-center text-white/80 hover:text-white hover:border-white/35 transition-colors"
               >
                 {icon}
@@ -143,11 +145,11 @@ export default function Footer() {
 
       {/* Logo + copyright */}
       <div
-        className="border-t border-white/30 py-6 md:py-8 flex flex-col sm:flex-row sm:items-center sm:justify-between"
+        className="border-t border-white/30 py-6 md:py-8 flex flex-col items-center sm:flex-row sm:items-center sm:justify-between"
         style={{ rowGap: "16px" }}
       >
-        <img src={oculusLogo} alt="Oculus International" className="h-11 sm:h-12 w-auto" />
-        <p className="font-body text-xs text-white/70">
+        <img src={oculusLogo} alt="Oculus International" className="h-11 sm:h-12 w-auto " />
+        <p className="font-body text-xs text-white/70 text-center sm:text-left">
           © 2026 All rights reserved by Oculus International.
         </p>
       </div>

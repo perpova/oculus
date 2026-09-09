@@ -23,6 +23,7 @@ import {
   Building,
 } from "lucide-react";
 import TakeFirstStep from "./TakeFirstStep";
+import { useQuoteModal } from "../context/QuoteModalContext";
 
 /**
  * SolutionTemplate — pure presentational component. Does NOT fetch data,
@@ -112,6 +113,7 @@ function FaqRow({ faq, isOpen, onToggle }) {
 }
 
 export default function SolutionTemplate({ solution, otherSolutions = [] }) {
+  const { openQuoteModal } = useQuoteModal();
   const [openFaq, setOpenFaq] = useState(0);
 
   if (!solution) return null;
@@ -164,9 +166,12 @@ export default function SolutionTemplate({ solution, otherSolutions = [] }) {
                 {description}
               </p>
             )}
-            <Link to={ctaHref} className="btn-accent inline-block rounded-lg px-6 py-2.5 text-sm font-medium">
+            <button
+              onClick={openQuoteModal}
+              className="btn-accent inline-block rounded-lg px-6 py-2.5 text-sm font-medium"
+            >
               {ctaLabel}
-            </Link>
+            </button>
           </div>
         </div>
       </section>
@@ -183,7 +188,7 @@ export default function SolutionTemplate({ solution, otherSolutions = [] }) {
           >
             Key Features
           </h2>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {keyFeatures.map((feature, i) => (
               <FeatureCard key={i} {...feature} />
             ))}
@@ -207,7 +212,7 @@ export default function SolutionTemplate({ solution, otherSolutions = [] }) {
             {brands.map((brand, i) => (
               <div
                 key={i}
-                className="rounded-xl px-6 py-4 flex items-center justify-center backdrop-blur-md"
+                className="rounded-xl px-4 py-3 sm:px-6 sm:py-4 flex items-center justify-center backdrop-blur-md"
                 style={{
                   backgroundColor: "rgba(255, 255, 255, 0.08)",
                   border: "1px solid rgba(255, 255, 255, 0.15)",
@@ -216,7 +221,7 @@ export default function SolutionTemplate({ solution, otherSolutions = [] }) {
                 <img
                   src={brand}
                   alt=""
-                  className="h-14 w-auto object-contain"
+                  className="h-8 sm:h-11 md:h-14 w-auto object-contain"
                 />
               </div>
             ))}
