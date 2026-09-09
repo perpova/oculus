@@ -277,11 +277,11 @@ export default function Navbar() {
             src={scrollProgress > 0.5 ? logoCompact : logo}
             alt="Oculus International"
             style={{ height: `${logoHeight}px` }}
-            className="w-auto max-h-9 sm:max-h-10 md:max-h-none transition-[height] duration-150 ease-out"
+            className="w-auto max-h-9 sm:max-h-10 lg:max-h-none transition-[height] duration-150 ease-out"
           />
         </Link>
 
-        <ul className="hidden md:flex items-center gap-8 text-base font-medium text-(--color-text-nav)/90">
+        <ul className="hidden lg:flex items-center gap-8 text-base font-medium text-(--color-text-nav)/90">
           {navLinks.map((link) => {
             const isWide = link.dropdown && link.dropdown.length > 6;
 
@@ -341,7 +341,7 @@ export default function Navbar() {
           })}
         </ul>
 
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden lg:flex items-center gap-4">
           <ThemeToggle />
 
           <button
@@ -352,7 +352,7 @@ export default function Navbar() {
           </button>
         </div>
 
-        <div className="md:hidden flex items-center gap-3">
+        <div className="lg:hidden flex items-center gap-3">
           <div className="scale-[0.7] origin-center -mx-1.5">
             <ThemeToggle />
           </div>
@@ -370,7 +370,7 @@ export default function Navbar() {
       {open &&
         createPortal(
           <div
-            className="md:hidden fixed left-0 right-0 bottom-0 z-[60] bg-(--color-bg) flex flex-col"
+            className="lg:hidden fixed left-0 right-0 bottom-0 z-[60] bg-(--color-bg) flex flex-col"
             style={{ top: `${navHeight}px` }}
           >
             <div className="flex-1 min-h-0 overflow-y-auto">

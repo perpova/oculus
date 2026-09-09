@@ -249,11 +249,11 @@ export default function SolutionsCarousel() {
             from the sm breakpoint up (sm:flex-row), and shares the row
             with the carousel from md up. */}
         <div
-          className="flex flex-col sm:flex-row md:w-1/2"
+          className="flex flex-col sm:flex-row md:w-1/2 min-w-0"
           style={{ columnGap: `${GAP_PX}px`, rowGap: "16px" }}
         >
           <div
-            className="w-full sm:shrink-0 rounded-2xl overflow-hidden bg-gray-100 flex items-center justify-center mx-auto"
+            className="w-full sm:w-2/5 sm:shrink-0 rounded-2xl overflow-hidden bg-gray-100 flex items-center justify-center mx-auto"
             style={{
               maxWidth: `${STATIC_WIDTH}px`,
               height: isMobile ? "220px" : `${CARD_HEIGHT}px`,
@@ -266,7 +266,7 @@ export default function SolutionsCarousel() {
             />
           </div>
 
-          <div className="flex flex-col justify-center" style={{ rowGap: "16px" }}>
+          <div className="flex flex-col justify-center min-w-0" style={{ rowGap: "16px" }}>
             <p className="text-olive text-sm md:text-lg">
               <span className="text-(--color-accent) text-lg md:text-2xl font-semibold">
                 Elite Cloud System

@@ -1,4 +1,6 @@
-import oculusLogo from "../assets/oculus-logo-2.png";
+
+import oculusLogo from "../assets/oculus-logo-footer-320w.png";
+
 
 const socialIcons = {
   linkedin: (
@@ -144,7 +146,7 @@ export default function Footer() {
         className="border-t border-white/30 py-6 md:py-8 flex flex-col sm:flex-row sm:items-center sm:justify-between"
         style={{ rowGap: "16px" }}
       >
-        <img src={oculusLogo} alt="Oculus International" className="h-11 sm:h-12 w-auto" style={{ imageRendering: "auto" }} />
+        <img src={oculusLogo} alt="Oculus International" className="h-11 sm:h-12 w-auto" />
         <p className="font-body text-xs text-white/70">
           © 2026 All rights reserved by Oculus International.
         </p>
