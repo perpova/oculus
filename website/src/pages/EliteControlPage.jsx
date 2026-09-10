@@ -119,8 +119,8 @@ const productCategories = [
 // rendered above the whole row, so no height needs to be reserved
 // for it inside the clipped viewport.
 const CAROUSEL_SIZES = {
-  mobile: { CIRCLE_SIZE: 72, CIRCLE_GAP: 6, VISIBLE_COUNT: 3, ARROW_BUTTON_SIZE: 28, ARROW_ROW_GAP: 6, LABEL_HEIGHT: 0 },
-  tablet: { CIRCLE_SIZE: 160, CIRCLE_GAP: 24, VISIBLE_COUNT: 2, ARROW_BUTTON_SIZE: 36, ARROW_ROW_GAP: 20, LABEL_HEIGHT: 44 },
+  mobile: { CIRCLE_SIZE: 90, CIRCLE_GAP: 8, VISIBLE_COUNT: 3, ARROW_BUTTON_SIZE: 30, ARROW_ROW_GAP: 8, LABEL_HEIGHT: 0 },
+  tablet: { CIRCLE_SIZE: 160, CIRCLE_GAP: 24, VISIBLE_COUNT: 3, ARROW_BUTTON_SIZE: 36, ARROW_ROW_GAP: 20, LABEL_HEIGHT: 44 },
   desktop: { CIRCLE_SIZE: 240, CIRCLE_GAP: 40, VISIBLE_COUNT: 3, ARROW_BUTTON_SIZE: 40, ARROW_ROW_GAP: 40, LABEL_HEIGHT: 40 },
 };
 
@@ -347,7 +347,7 @@ export default function EliteControlPage() {
             disabled={isAnimating}
             aria-label="Previous product"
             className="flex shrink-0 items-center justify-center rounded-full border border-(--color-border) text-(--color-text-secondary) transition-colors hover:border-(--color-accent-teal) hover:text-(--color-accent-teal) disabled:cursor-not-allowed disabled:opacity-40"
-            style={{ width: `${ARROW_BUTTON_SIZE}px`, height: `${ARROW_BUTTON_SIZE}px` }}
+            style={{ width: `${ARROW_BUTTON_SIZE}px`, height: `${ARROW_BUTTON_SIZE}px`, marginTop: `${LABEL_HEIGHT / 2}px`}}
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
@@ -359,7 +359,7 @@ export default function EliteControlPage() {
               circle (LABEL_HEIGHT is 0 on mobile now that the label
               lives outside this clipped box). */}
           <div
-            className="shrink-0 overflow-hidden"
+            className="shrink-0 overflow-hidden flex items-center "
             style={{
               width: `${VIEWPORT_WIDTH}px`,
               height: `${CIRCLE_SIZE * 1.15 + LABEL_HEIGHT}px`,
@@ -369,7 +369,7 @@ export default function EliteControlPage() {
                 is always fully rendered */}
             <div
               onTransitionEnd={handleTransitionEnd}
-              className="flex items-start"
+              className="flex items-center"
               style={{
                 gap: `${CIRCLE_GAP}px`,
                 transform: `translateX(${trackOffset}px)`,
@@ -453,7 +453,7 @@ export default function EliteControlPage() {
             disabled={isAnimating}
             aria-label="Next product"
             className="flex shrink-0 items-center justify-center rounded-full border border-(--color-border) text-(--color-text-secondary) transition-colors hover:border-(--color-accent-teal) hover:text-(--color-accent-teal) disabled:cursor-not-allowed disabled:opacity-40"
-            style={{ width: `${ARROW_BUTTON_SIZE}px`, height: `${ARROW_BUTTON_SIZE}px` }}
+            style={{ width: `${ARROW_BUTTON_SIZE}px`, height: `${ARROW_BUTTON_SIZE}px`, marginTop: `${LABEL_HEIGHT / 2}px`}}
           >
             <ChevronRight className="h-5 w-5" />
           </button>

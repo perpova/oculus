@@ -101,24 +101,35 @@ const solutions = [
 // always matches however many items are in the `solutions` array
 // above, not a fixed number.
 //
-// CARDS_VISIBLE (how many cards are visible in the viewport at once)
-// is now responsive: 1 on mobile, 2 on desktop — see inside the
-// component below. The `extended` duplicate-buffer always duplicates
-// a fixed 2 cards regardless of screen size, so resizing mid-session
-// (or a stale value) never leaves the wrap-around short on content.
+// CARDS_VISIBLE and CARD_WIDTH are now driven by the actual measured
+// width of the carousel's column (see useContainerWidth below) rather
+// than fixed pixel breakpoints. Fixed breakpoints kept failing one
+// device at a time (iPad Air → Surface Pro 7 → Nest Hub Max → ...)
+// because no single CARD_WIDTH fits both a 768px tablet column and a
+// 1280px+ desktop column showing 2 cards. Measuring the real space and
+// sizing cards to fit it (clamped between MIN/MAX so cards don't get
+// too cramped or too huge) works for any width without per-device
+// tuning. Phones still get a fixed, smaller card size — see isMobile.
 
 const GAP_PX = 20;
 const STEP_INTERVAL = 3000; // ms the row pauses between steps
 const TRANSITION_MS = 1600; // ms the slide animation takes
 
 // ─── Responsive sizing ─────────────────────────────────────────
-// Desktop keeps the original fixed pixel sizing. Below the breakpoint we
-// switch to smaller card/image dimensions so nothing overflows the
-// viewport on a phone. These feed both the JSX `style` widths/heights AND
-// the carousel's own slide-distance math (stepPx), so the two always stay
-// in sync regardless of screen size.
-const DESKTOP = { CARD_WIDTH: 300, CARD_HEIGHT: 377, STATIC_WIDTH: 400 };
-const MOBILE = { CARD_WIDTH: 240, CARD_HEIGHT: 320, STATIC_WIDTH: 260 };
+const MOBILE_CARD_WIDTH = 240;
+const MOBILE_CARD_HEIGHT = 320;
+const MOBILE_STATIC_WIDTH = 260;
+
+// Desktop/tablet cards keep the original card's proportions
+// (377/300 and 400/300) but scale with the measured column width.
+const ASPECT_RATIO = 377 / 300;
+const STATIC_ASPECT_RATIO = 400 / 300;
+
+// Below this width, 2 cards would feel cramped — drop to 1 full-size
+// card instead of squeezing two in. Above this, cap card size so very
+// wide screens don't stretch cards larger than the original design.
+const MIN_DESKTOP_CARD_WIDTH = 220;
+const MAX_DESKTOP_CARD_WIDTH = 300;
 
 function useIsMobile(breakpoint = 768) {
   const [isMobile, setIsMobile] = useState(
@@ -134,14 +145,59 @@ function useIsMobile(breakpoint = 768) {
   return isMobile;
 }
 
+// Measures the actual rendered width of a ref'd element via
+// ResizeObserver, so card sizing reacts to real available space
+// (flex-basis, padding, container queries, etc.) instead of guessing
+// from window width alone.
+function useContainerWidth(ref) {
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const ro = new ResizeObserver(([entry]) => {
+      setWidth(entry.contentRect.width);
+    });
+    ro.observe(ref.current);
+    return () => ro.disconnect();
+  }, [ref]);
+
+  return width;
+}
+
 export default function SolutionsCarousel() {
   const isMobile = useIsMobile();
-  const { CARD_WIDTH, CARD_HEIGHT, STATIC_WIDTH } = isMobile ? MOBILE : DESKTOP;
+  const containerRef = useRef(null);
+  const containerWidth = useContainerWidth(containerRef);
 
-  // How many cards are visible in the viewport at once: 1 on mobile,
-  // 2 on desktop. This drives the viewport's max-width below so the
-  // browser can never show a sliver of the next card.
-  const CARDS_VISIBLE = isMobile ? 1 : 2;
+  // How wide 2 cards + the gap between them would be if we used all
+  // the measured space. Falls back to the original 300px desktop size
+  // before the first ResizeObserver measurement lands.
+  const twoCardWidth =
+    containerWidth > 0 ? (containerWidth - GAP_PX) / 2 : MAX_DESKTOP_CARD_WIDTH;
+
+  // Only show 2 cards if each would be comfortably above the minimum;
+  // otherwise fall back to 1 full-size card that fits the column.
+  const CARDS_VISIBLE = isMobile ? 1 : twoCardWidth >= MIN_DESKTOP_CARD_WIDTH ? 2 : 1;
+
+  const desktopTwoCardWidth = Math.min(
+    MAX_DESKTOP_CARD_WIDTH,
+    Math.max(MIN_DESKTOP_CARD_WIDTH, twoCardWidth)
+  );
+  const desktopSingleCardWidth = Math.min(
+    MAX_DESKTOP_CARD_WIDTH,
+    containerWidth || MAX_DESKTOP_CARD_WIDTH
+  );
+
+  const CARD_WIDTH = isMobile
+    ? MOBILE_CARD_WIDTH
+    : CARDS_VISIBLE === 2
+    ? desktopTwoCardWidth
+    : desktopSingleCardWidth;
+
+  const CARD_HEIGHT = isMobile ? MOBILE_CARD_HEIGHT : Math.round(CARD_WIDTH * ASPECT_RATIO);
+  const STATIC_WIDTH = isMobile
+    ? MOBILE_STATIC_WIDTH
+    : Math.round(CARD_WIDTH * STATIC_ASPECT_RATIO);
 
   const [index, setIndex] = useState(0);
   const [withTransition, setWithTransition] = useState(true);
@@ -290,60 +346,62 @@ export default function SolutionsCarousel() {
           </div>
         </div>
 
-        {/* ── Right half: carousel viewport — only this part scrolls ──
-            maxWidth is pinned to exactly CARDS_VISIBLE cards' worth of
-            pixels (1 on mobile, 2 on desktop) plus the gaps between
-            them, so the flex layout can never stretch the viewport
-            wide enough to reveal a sliver of the next card. md:w-1/2
-            stays as an outer ceiling on desktop row layout. */}
-        <div
-          className="min-w-0 md:w-1/2 overflow-hidden"
-          style={{ maxWidth: `${viewportWidth}px` }}
-        >
+        {/* ── Right half: measured column ──
+            containerRef measures this outer div's actual width (set by
+            md:w-1/2, independent of its children), which CARD_WIDTH
+            above is derived from. The clipping/maxWidth logic lives on
+            the INNER div instead, so constraining the inner element's
+            width never feeds back into the measurement itself. */}
+        <div ref={containerRef} className="min-w-0 md:w-1/2">
           <div
-            ref={trackRef}
-            onTransitionEnd={handleTransitionEnd}
-            className="flex"
-            style={{
-              transform: `translateX(-${index * stepPx}px)`,
-              transition: withTransition
-                ? `transform ${TRANSITION_MS}ms ease-in-out`
-                : "none",
-              columnGap: `${GAP_PX}px`,
-            }}
+            className="overflow-hidden mx-auto md:mx-0"
+            style={{ maxWidth: `${viewportWidth}px` }}
           >
-            {extended.map((s, i) => (
-              <Link
-                to={`/solutions/${s.slug}`}
-                key={`${s.slug}-${i}`}
-                className="group flex flex-col shrink-0 rounded-2xl bg-grey overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
-                style={{ width: `${CARD_WIDTH}px`, height: `${CARD_HEIGHT}px` }}
-              >
-                {/* image is half the card height — not the whole card */}
-                <div
-                  className="relative overflow-hidden shrink-0"
-                  style={{ width: `${CARD_WIDTH}px`, height: `${CARD_HEIGHT / 2}px` }}
+            <div
+              ref={trackRef}
+              onTransitionEnd={handleTransitionEnd}
+              className="flex"
+              style={{
+                transform: `translateX(-${index * stepPx}px)`,
+                transition: withTransition
+                  ? `transform ${TRANSITION_MS}ms ease-in-out`
+                  : "none",
+                columnGap: `${GAP_PX}px`,
+              }}
+            >
+              {extended.map((s, i) => (
+                <Link
+                  to={`/solutions/${s.slug}`}
+                  key={`${s.slug}-${i}`}
+                  className="group flex flex-col shrink-0 rounded-2xl bg-grey overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
+                  style={{ width: `${CARD_WIDTH}px`, height: `${CARD_HEIGHT}px` }}
                 >
-                  <img
-                    src={s.image}
-                    alt={s.label}
-                    className="absolute inset-0 w-full h-full object-cover "
-                    style={{ transition: "all 0.3s ease" }}
-                  />
-                </div>
+                  {/* image is half the card height — not the whole card */}
+                  <div
+                    className="relative overflow-hidden shrink-0"
+                    style={{ width: `${CARD_WIDTH}px`, height: `${CARD_HEIGHT / 2}px` }}
+                  >
+                    <img
+                      src={s.image}
+                      alt={s.label}
+                      className="absolute inset-0 w-full h-full object-cover "
+                      style={{ transition: "all 0.3s ease" }}
+                    />
+                  </div>
 
-                <div className="flex flex-col flex-1 p-4 md:p-5 min-h-0" style={{ rowGap: "10px" }}>
-                  <p className="font-display text-base md:text-lg leading-snug text-(--color-teal-dark) line-clamp-2">
-                    {s.label}
-                  </p>
-                  <p className="text-xs md:text-sm text-olive flex-1 line-clamp-2">{s.desc}</p>
-                  <span className="inline-flex items-center gap-1.5 text-xs md:text-sm font-semibold text-(--color-teal-dark) mt-auto transition-colors duration-200 group-hover:text-(--color-green-light)">
-                    <span className="underline underline-offset-4 ">Discover More</span>
-                    <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-1" />
-                  </span>
-                </div>
-              </Link>
-            ))}
+                  <div className="flex flex-col flex-1 p-4 md:p-5 min-h-0" style={{ rowGap: "10px" }}>
+                    <p className="font-display text-base md:text-lg leading-snug text-(--color-teal-dark) line-clamp-2">
+                      {s.label}
+                    </p>
+                    <p className="text-xs md:text-sm text-olive flex-1 line-clamp-2">{s.desc}</p>
+                    <span className="inline-flex items-center gap-1.5 text-xs md:text-sm font-semibold text-(--color-teal-dark) mt-auto transition-colors duration-200 group-hover:text-(--color-green-light)">
+                      <span className="underline underline-offset-4 ">Discover More</span>
+                      <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-1" />
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </div>

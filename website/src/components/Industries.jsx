@@ -11,28 +11,24 @@ const industries = [
     title: "Residential",
     image: residentialImg,
     desc: "Protect your home and loved ones with smart alarm systems, HD surveillance, and app-controlled access, monitored 24/7.",
-    hoverBg: "hover:bg-teal-light",
     slug: "residential-and-apartments",
   },
   {
     title: "Government",
     image: governmentImg,
     desc: "High-assurance security infrastructure for public institutions, including multi-layer access control and encrypted surveillance.",
-    hoverBg: "hover:bg-gold",
     slug: "government-and-defence",
   },
   {
     title: "Commercial",
     image: commercialImg,
     desc: "Safeguard your business with integrated CCTV, access-controlled entry, and real-time intrusion alerts.",
-    hoverBg: "hover:bg-teal-light",
     slug: "corporate-and-commercial",
   },
   {
     title: "Education",
     image: educationImg,
     desc: "Create safe learning environments with campus-wide CCTV, controlled entry, and instant emergency alerts.",
-    hoverBg: "hover:bg-gold",
     slug: "education",
   },
 ];
@@ -51,23 +47,40 @@ export default function Industries() {
           {industries.map((ind) => (
             <div
               key={ind.title}
-              className={`group relative flex flex-col justify-between p-8 min-h-[420px] rounded-2xl bg-white/5 ${ind.hoverBg} transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:z-10`}
+              className="group relative h-[420px] rounded-2xl overflow-hidden shadow-lg transition-shadow duration-300 hover:shadow-2xl"
             >
-              <div>
-                <h3 className="font-display font-bold text-2xl text-gold group-hover:text-teal-deep transition-colors duration-300">{ind.title}</h3>
-                <p className="text-white/60 group-hover:text-white/85 text-sm mt-3 transition-colors duration-300">
-                  {ind.desc}
-                </p>
+              {/* full-bleed background image */}
+              <img
+                src={ind.image}
+                alt={ind.title}
+                className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+
+              {/* base gradient — keeps the always-visible title readable
+                  against the image without needing a solid panel */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+
+              {/* always-visible title, bottom-left over the image.
+                  Fades out on hover so it doesn't double up with the
+                  title inside the reveal panel below. */}
+              <h3 className="absolute bottom-6 left-6 z-10 font-display font-bold text-2xl text-white transition-opacity duration-200 group-hover:opacity-0">
+                {ind.title}
+              </h3>
+
+              {/* hover panel — sits below the card's visible area
+                  (translate-y-full) and slides up to cover the bottom
+                  portion on hover. Height is driven by its own content
+                  (title + desc + button), not a fixed value, so it
+                  scales naturally per language/content length. */}
+              <div className="absolute inset-x-0 bottom-0 z-10 translate-y-full bg-teal-deep/65 backdrop-blur-sm px-6 pb-6 pt-8 transition-transform duration-300 ease-out group-hover:translate-y-0">
+                <h3 className="font-display font-bold text-2xl text-white">{ind.title}</h3>
+                <p className="mt-3 text-sm text-white/80">{ind.desc}</p>
                 <Link
                   to={`/industries/${ind.slug}`}
-                  className="btn-accent-sub inline-flex items-center gap-2 text-sm font-semibold mt-4 px-1.5 py-0.5 rounded-lg transition-colors duration-300 hover:gap-3"
+                  className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-(--color-teal-deep) transition-colors duration-200 hover:bg-white/90"
                 >
-                  Learn more <ArrowRight className="w-3.5 h-3.5" />
+                  Learn More <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
-              </div>
-
-              <div className="relative h-40 rounded-xl overflow-hidden opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-                <img src={ind.image} alt={ind.title} className="w-full h-full object-cover" />
               </div>
             </div>
           ))}
