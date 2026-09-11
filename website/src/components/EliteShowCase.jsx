@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 // Swap for your real asset — same import convention as the rest
 // of the site (../assets/*)
-import elitePanelImg from "../assets/elite-panel-overview.jpg";
+import elitePanelImg from "../assets/elite-panel-overview.webp";
 
 // ─── Quick highlight points ────────────────────────────────────
 // Short, icon-led — not full cards. Keep desc to one line.

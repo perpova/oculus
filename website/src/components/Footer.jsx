@@ -1,5 +1,5 @@
 
-import oculusLogo from "../assets/oculus-logo-footer-320w.png";
+import oculusLogo from "../assets/oculus-logo-5.svg";
 
 
 const socialIcons = {

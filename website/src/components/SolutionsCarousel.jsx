@@ -1,19 +1,19 @@
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import solution_1_Img from "../assets/solution-1.jpg";
-import solution_2_Img from "../assets/solution-2.jpeg";
-import solution_3_Img from "../assets/solution-3.jpg";
-import solution_4_Img from "../assets/solution-4.jpg";
-import solution_5_Img from "../assets/solution-5.png";
-import solution_6_Img from "../assets/solution-6.2.jpeg";
-import solution_7_Img from "../assets/solution-7.jpg";
-import solution_8_Img from "../assets/solution-8.jpg";
-import solution_9_Img from "../assets/solution-9.png";
-import solution_10_Img from "../assets/solution-10.jpg";
-import solution_11_Img from "../assets/solution-11.jpg";
-import solution_12_Img from "../assets/solution-12.jpg";
-import eliteImg from "../assets/elite.png";
+import solution_1_Img from "../assets/solution-1.webp";
+import solution_2_Img from "../assets/solution-2.webp";
+import solution_3_Img from "../assets/solution-3.webp";
+import solution_4_Img from "../assets/solution-4.webp";
+import solution_5_Img from "../assets/solution-5.1.webp";
+import solution_6_Img from "../assets/solution-6.2.webp";
+import solution_7_Img from "../assets/solution-7.webp";
+import solution_8_Img from "../assets/solution-8.webp";
+import solution_9_Img from "../assets/solution-9.webp";
+import solution_10_Img from "../assets/solution-10.webp";
+import solution_11_Img from "../assets/solution-11.webp";
+import solution_12_Img from "../assets/solution-12.webp";
+import eliteImg from "../assets/elite.webp";
 
 // `slug` on each entry must match the `slug` field in data/solutions.js
 // exactly — that's what the routed solution page looks up.

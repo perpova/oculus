@@ -36,7 +36,7 @@ import {
   UserCheck,
   MoreHorizontal,
 } from "lucide-react";
-import logo from "../assets/oculus-logo-2.png";
+import logo from "../assets/oculus-logo-5.svg";
 // TODO: replace with your actual compact/secondary logo asset path
 import logoCompact from "../assets/company-logo-2.png";
 import ThemeToggle from "./ThemeToggle";

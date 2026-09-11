@@ -1,8 +1,8 @@
 import { ArrowRight } from "lucide-react";
-import residentialImg from "../assets/residential.jpg";
-import governmentImg from "../assets/government.png";
-import commercialImg from "../assets/commercial.jpg";
-import educationImg from "../assets/education.jpg";
+import residentialImg from "../assets/residential.webp";
+import governmentImg from "../assets/government.webp";
+import commercialImg from "../assets/commercial.webp";
+import educationImg from "../assets/education-1.webp";
 
 import { Link } from "react-router-dom";
 
@@ -72,12 +72,12 @@ export default function Industries() {
                   portion on hover. Height is driven by its own content
                   (title + desc + button), not a fixed value, so it
                   scales naturally per language/content length. */}
-              <div className="absolute inset-x-0 bottom-0 z-10 translate-y-full bg-teal-deep/65 backdrop-blur-sm px-6 pb-6 pt-8 transition-transform duration-300 ease-out group-hover:translate-y-0">
+              <div className="absolute inset-x-0 bottom-0 z-10 translate-y-full bg-gold/20 backdrop-blur-sm px-6 pb-6 pt-8 transition-transform duration-300 ease-out group-hover:translate-y-0">
                 <h3 className="font-display font-bold text-2xl text-white">{ind.title}</h3>
                 <p className="mt-3 text-sm text-white/80">{ind.desc}</p>
                 <Link
                   to={`/industries/${ind.slug}`}
-                  className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-(--color-teal-deep) transition-colors duration-200 hover:bg-white/90"
+                  className="mt-4 inline-flex items-center gap-2 rounded-full border border-white bg-transparent px-5 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-white hover:text-(--color-teal-deep)"
                 >
                   Learn More <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
